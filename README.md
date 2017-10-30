@@ -6,6 +6,12 @@ Dagger, remove the most redundant cancer of the enterprise, make programming eas
 声明：<br/>
 框架处于调试阶段，出现的纰漏以及相关的疑问，请及时与作者沟通，期待在开发的过程中结识有趣的你。<br/>
 
+使用说明：<br/>
+克隆代码：git clone https://github.com/wanghuanjie/cloak.git<br/>
+安装依赖：npm install<br/>
+本地运行：npm run dev<br/>
+编译发布：npm run build<br/>
+
 里程碑及其规划<br/>
 1.2017-10-30 Cloak诞生;<br/>
 
