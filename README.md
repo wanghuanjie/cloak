@@ -13,6 +13,12 @@ Dagger, remove the most redundant cancer of the enterprise, make programming eas
 编译发布：npm run build<br/>
 *可以考虑安装阿里的cnpm<br/>
 
+参考文档：<br/>
+Axios：https://www.kancloud.cn/yunye/axios<br/>
+Mock：https://github.com/nuysoft/Mock/wiki/Getting-Started<br/>
+Element：http://element.eleme.io/#/zh-CN<br/>
+Vue：https://cn.vuejs.org<br/>
+
 里程碑及其规划<br/>
 1.2017-10-30 Cloak诞生;<br/>
 
