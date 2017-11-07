@@ -116,7 +116,7 @@
       var user = sessionStorage.getItem('access-user');
       if (user) {
         user = JSON.parse(user);
-        this.sysUserName = user.name || '';
+        this.sysUserName = user.userName || '';
       }
     }
   }

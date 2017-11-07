@@ -22,17 +22,13 @@
 
       <!--列表-->
       <el-table :data="users" highlight-current-row v-loading="loading" style="width: 100%;">
-        <el-table-column type="index" width="60">
+        <el-table-column type="user_id" width="60">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" width="120" sortable>
+        <el-table-column prop="user_name" label="姓名" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="sex" label="性别" width="100" :formatter="formatSex" sortable>
+        <el-table-column prop="gender" label="性别" width="100" :formatter="formatGender" sortable>
         </el-table-column>
-        <el-table-column prop="age" label="年龄" width="100" sortable>
-        </el-table-column>
-        <el-table-column prop="birth" label="生日" width="120" sortable>
-        </el-table-column>
-        <el-table-column prop="addr" label="地址" min-width="180" sortable>
+        <el-table-column prop="mail" label="邮件" min-width="180" sortable>
         </el-table-column>
       </el-table>
 
@@ -41,7 +37,8 @@
 </template>
 
 <script>
-  import { reqGetUserList } from '../../api/api';
+  // import { reqGetUserList } from '../../api/api';
+  import { requestDoQueryUsers } from '../../api/api';
 
   export default {
     data() {
@@ -56,8 +53,8 @@
     },
     methods: {
       //性别显示转换
-      formatSex: function (row, column) {
-        return row.sex == 1 ? '男' : row.sex == 0 ? '女' : '未知';
+      formatGender: function (row, column) {
+        return row.gender == 'MALE'? '男' : '女';
       },
       //获取用户列表
       getUser: function () {
@@ -66,11 +63,16 @@
         };
         this.loading = true;
         //NProgress.start();
-        reqGetUserList(para).then((res) => {
-          this.users = res.data.users;
+        requestDoQueryUsers(para).then((res) => {
+          this.users = res.data_collect;
           this.loading = false;
           //NProgress.done();
         });
+        // reqGetUserList(para).then((res) => {
+        //   this.users = res.data.users;
+        //   this.loading = false;
+        //   //NProgress.done();
+        // });
       }
     },
     mounted() {

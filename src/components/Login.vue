@@ -16,15 +16,18 @@
 </template>
 
 <script>
-  import {requestLogin} from '../api/api';
+  // import {requestLogin} from '../api/api';
+  import {requestDoLogin} from '../api/api';
+  import qs from 'qs';
+
   //import NProgress from 'nprogress'
   export default {
     data() {
       return {
         logining: false,
         account: {
-          username: 'admin',
-          pwd: '123456'
+          username: '',
+          pwd: ''
         },
         rules: {
           username: [
@@ -46,21 +49,46 @@
 
             this.logining = true;
             //NProgress.start();
-            var loginParams = { username: this.account.username, password: this.account.pwd };
-            requestLogin(loginParams).then(data => {
+
+            var loginParams = { account: this.account.username, password: this.account.pwd };
+
+            requestDoLogin(qs.stringify(loginParams)).then(data => {
+              console.log(data);
               this.logining = false;
               //NProgress.done();
-              let { msg, code, user } = data;
-              if (code !== 200) {
+              if (data.success == false) {
                 this.$message({
-                  message: msg,
+                  message: data.msg,
                   type: 'error'
                 });
               } else {
-                sessionStorage.setItem('access-user', JSON.stringify(user));
+                // sessionStorage.setItem('access-user', JSON.stringify(data.data_collect));
+                sessionStorage.setItem('access-user', JSON.stringify({
+                                                                      id: 1,
+                                                                      username: 'wanghj',
+                                                                      password: '123456',
+                                                                      email: 'jerry9022@qq.com',
+                                                                      name: '超级管理员'
+                                                                    }));
+
                 this.$router.push({ path: '/' });
               }
             });
+
+            // requestLogin(loginParams).then(data => {
+            //   this.logining = false;
+            //   //NProgress.done();
+            //   let { msg, code, user } = data;
+            //   if (code !== 200) {
+            //     this.$message({
+            //       message: msg,
+            //       type: 'error'
+            //     });
+            //   } else {
+            //     sessionStorage.setItem('access-user', JSON.stringify(user));
+            //     this.$router.push({ path: '/' });
+            //   }
+            // });
 
           } else {
             console.log('error submit!!');

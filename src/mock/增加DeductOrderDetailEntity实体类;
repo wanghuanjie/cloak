@@ -1,0 +1,4 @@
+增加DeductOrderDetailEntity实体类;
+增加DeductOrderDetailEntity的初始化sql包括oracle以及db2;
+增加发起扣费生成明细表的逻辑，注意此处要防止并发处理。还要考虑之前的实体类防止并发；
+增加手动的逻辑；
