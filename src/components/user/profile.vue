@@ -11,10 +11,10 @@
     <el-col :span="24" class="warp-main">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="账号">
-          <el-input v-model="form.useranme" disabled></el-input>
+          <el-input v-model="form.account" disabled></el-input>
         </el-form-item>
         <el-form-item prop="name" label="昵称">
-          <el-input v-model="form.name"></el-input>
+          <el-input v-model="form.username"></el-input>
         </el-form-item>
         <el-form-item prop="email" label="邮箱">
           <el-input v-model="form.email"></el-input>
@@ -35,8 +35,8 @@
     data() {
       return {
         form: {
-          useranme: '',
-          name: '',
+          account: '',
+          username: '',
           email: ''
         },
         rules: {
@@ -84,8 +84,8 @@
       var user = sessionStorage.getItem('access-user');
       if (user) {
         user = JSON.parse(user);
-        this.form.useranme = user.username;
-        this.form.name = user.name || '';
+        this.form.account = user.account;
+        this.form.username = user.userName || '';
         this.form.email = user.email || '';
       }
     }

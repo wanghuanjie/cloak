@@ -6,7 +6,7 @@
         <a href="/"><img src="../assets/logo.png" style="padding-left:8px;"></a>
       </div>
       <div class="topbar-logos" v-show="!collapsed">
-        <a href="/"><img src="../assets/logotxt.png"></a>
+        <a href="/"><img style="width:100%;height:100%" src="../assets/logotxt.png"></a>
       </div>
       <div class="topbar-title">
         <span style="font-size: 18px;color: #fff;">Cloak管理系统</span>

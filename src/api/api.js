@@ -29,6 +29,9 @@ export const requestDoLogin = params => { return axios.post(`${base_user_dir}/lo
                       }
                   }).then(res => res.data) }
 
-export const requestDoQueryUsers = params => { return axios.get(`${base_user_dir}/usermanage/doquery`, { params: params }) }
+export const requestDoQueryUsers = params => { return axios.get(`${base_user_dir}/usermanage/doquery`, params).then(res => res.data) }
 
-export const requestDoQueryRoles = params => { return axios.get(`${base_user_dir}/rolemanage/doqueryroles`, { params: params }) }
+export const requestDoQueryRoles = params => { return axios.get(`${base_user_dir}/rolemanage/doqueryroles`, params).then(res => res.data) }
+
+export const requestDoQueryPrivileges = params => { return axios.get(`${base_user_dir}/privilegemanage/queryprivileges`, params).then(res => res.data) }
+

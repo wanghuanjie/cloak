@@ -64,11 +64,10 @@
               } else {
                 // sessionStorage.setItem('access-user', JSON.stringify(data.data_collect));
                 sessionStorage.setItem('access-user', JSON.stringify({
-                                                                      id: 1,
-                                                                      username: 'wanghj',
-                                                                      password: '123456',
-                                                                      email: 'jerry9022@qq.com',
-                                                                      name: '超级管理员'
+                                                                      userId: data.data_collect.userId,
+                                                                      account:data.data_collect.account,
+                                                                      userName: data.data_collect.userName,
+                                                                      email: data.data_collect.email
                                                                     }));
 
                 this.$router.push({ path: '/' });
