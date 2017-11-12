@@ -29,6 +29,18 @@ export const requestDoLogin = params => { return axios.post(`${base_user_dir}/lo
                       }
                   }).then(res => res.data) }
 
+export const requestDoUpdateUser = params => { return axios.post(`${base_user_dir}/usermanage/doupdate`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
+
+export const requestDoChangePwd = params => { return axios.post(`${base_user_dir}/usermanage/dochangepwd`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
+
 export const requestDoQueryUsers = params => { return axios.get(`${base_user_dir}/usermanage/doquery`, params).then(res => res.data) }
 
 export const requestDoQueryRoles = params => { return axios.get(`${base_user_dir}/rolemanage/doqueryroles`, params).then(res => res.data) }

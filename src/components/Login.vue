@@ -74,21 +74,6 @@
               }
             });
 
-            // requestLogin(loginParams).then(data => {
-            //   this.logining = false;
-            //   //NProgress.done();
-            //   let { msg, code, user } = data;
-            //   if (code !== 200) {
-            //     this.$message({
-            //       message: msg,
-            //       type: 'error'
-            //     });
-            //   } else {
-            //     sessionStorage.setItem('access-user', JSON.stringify(user));
-            //     this.$router.push({ path: '/' });
-            //   }
-            // });
-
           } else {
             console.log('error submit!!');
             return false;

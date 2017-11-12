@@ -9,18 +9,18 @@
     </el-col>
 
     <el-col :span="24" class="warp-main">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="账号">
-          <el-input v-model="form.account" disabled></el-input>
+      <el-form ref="UserForm" :model="user" :rules="rules" label-width="80px">
+        <el-form-item prop="account" label="账号">
+          <el-input v-model="user.account" disabled></el-input>
         </el-form-item>
-        <el-form-item prop="name" label="昵称">
-          <el-input v-model="form.username"></el-input>
+        <el-form-item prop="nickname" label="昵称">
+          <el-input v-model="user.nickname"></el-input>
         </el-form-item>
         <el-form-item prop="email" label="邮箱">
-          <el-input v-model="form.email"></el-input>
+          <el-input v-model="user.email"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">修改并保存</el-button>
+          <el-button type="default" @click="onSubmit" :loading="logining">修改并保存</el-button>
         </el-form-item>
       </el-form>
     </el-col>
@@ -28,66 +28,79 @@
 </template>
 
 <script>
-  import {reqSaveUserProfile} from '../../api/api';
-  import {bus} from '../../bus.js'
+  import {requestDoUpdateUser} from '../../api/api';
+  import qs from 'qs';
 
   export default {
     data() {
       return {
-        form: {
+        logining: false,
+        user: {
           account: '',
-          username: '',
-          email: ''
+          nickname: '',
+          email:''        
         },
         rules: {
-          name: [
-            {required: true, message: '请输入昵称', trigger: 'blur'}
+          nickname: [
+            {required: true, message: '请输入用户名', trigger: 'blur'},
+            //{ validator: validaePass }
           ],
           email: [
-            {required: true, message: '请输入邮箱', trigger: 'blur'},
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
+            {required: true, message: '请输入用户邮箱', trigger: 'blur'},
+            //{ validator: validaePass2 }
           ]
         },
-      }
+        checked: true
+      };
     },
     methods: {
       onSubmit() {
-        var that = this;
-        this.$refs.form.validate((valid) => {
+        this.$refs.UserForm.validate((valid) => {
           if (valid) {
-            var args = {name: this.form.name, email: this.form.email};
-            reqSaveUserProfile(args).then(function (data) {
-              let {msg, code, user} = data;
-              if (code !== 200) {
-                that.$message({
-                  message: msg,
+            this.logining = true;
+
+            var currentUser = sessionStorage.getItem('access-user');
+            var userId = -1;
+            if (currentUser) {
+               currentUser = JSON.parse(currentUser);
+               userId = currentUser.userId;
+            }
+
+            var formParams = { 
+                               userId: userId, 
+                               nickName: this.user.nickname,
+                               email: this.user.email 
+                             };
+            requestDoUpdateUser(qs.stringify(formParams)).then(data => {
+              this.logining = false;
+
+              if (data.success == false) {
+                this.$message({
+                  message: data.msg,
                   type: 'error'
                 });
               } else {
-                sessionStorage.setItem('access-user', JSON.stringify(user));
-                bus.$emit('setUserName', user.name);
-                that.$message({
-                  message: "修改成功！",
-                  type: 'success',
-                  duration: 2000 //默认3s太长
+                this.$message({
+                  message: data.msg,
+                  type: 'info'
                 });
+                //TODO 更新面板的用户显示名
               }
-            })
+            });
           } else {
-            console.log('error submit!!');
             return false;
           }
         });
       }
     },
     mounted() {
-      var user = sessionStorage.getItem('access-user');
-      if (user) {
-        user = JSON.parse(user);
-        this.form.account = user.account;
-        this.form.username = user.userName || '';
-        this.form.email = user.email || '';
-      }
-    }
+        var currentUser = sessionStorage.getItem('access-user');
+        if (currentUser) {
+          currentUser = JSON.parse(currentUser);
+          this.user.account = currentUser.account;
+          this.user.nickname = currentUser.userName || '';
+          this.user.email = currentUser.email || '';
+        }
+      },
   }
 </script>
