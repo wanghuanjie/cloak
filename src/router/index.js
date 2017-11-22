@@ -10,6 +10,9 @@ import UserList from '@/components/user/list'
 import UserChangePwd from '@/components/user/changepwd'
 import UserProfile from '@/components/user/profile'
 
+import Statistics from '@/components/statistics/user'
+
+
 // 懒加载方式，当路由被访问的时候才加载对应组件
 const Login = resolve => require(['@/components/Login'], resolve)
 
@@ -64,6 +67,16 @@ let router = new Router({
       iconCls: 'iconfont icon-books',
       children: [
         {path: '/privilege/list', component: PrivilegeList, name: '权限列表', menuShow: true}
+      ]
+    },
+    {
+      path: '/',
+      component: Home,
+      name: '统计管理',
+      menuShow: true,
+      iconCls: 'iconfont icon-books',
+      children: [
+        {path: 'statistics/user', component: Statistics, name: '用户统计', menuShow: true}
       ]
     },
     {
