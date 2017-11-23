@@ -25,36 +25,36 @@
 </template>
 
 <script>
-  import sockjs from 'sockjs';
-  import stomp from 'stomp';
+  // import sockjs from 'sockjs';
+  // import stomp from 'stomp';
 
 
-  export default {
-    data() {
-      return {
+  // export default {
+  //   data() {
+  //     return {
         
-      }
-    },
-    methods: {
-      initWebSocket(){
-        var socket = new SockJS("http://localhost:8100/daggerwebsocket");
-        var ws = Stomp.over(socket);
+  //     }
+  //   },
+  //   methods: {
+  //     initWebSocket(){
+  //       var socket = new SockJS("http://localhost:8100/daggerwebsocket");
+  //       var ws = Stomp.over(socket);
 
-        ws.connect({}, function(frame) {
-            ws.subscribe("/daggerbroker/test", function(event) {
-                console.log(event);
-            });
-        }, function(frame) {
+  //       ws.connect({}, function(frame) {
+  //           ws.subscribe("/daggerbroker/test", function(event) {
+  //               console.log(event);
+  //           });
+  //       }, function(frame) {
 
-            console.log(frame);
-            console.error(new Date() + 'websocket失去连接');
-        });
-      }
-    },
-    mounted() {
-      this.initWebSocket();
-    }
-  }
+  //           console.log(frame);
+  //           console.error(new Date() + 'websocket失去连接');
+  //       });
+  //     }
+  //   },
+  //   mounted() {
+  //     this.initWebSocket();
+  //   }
+  // }
 </script>
 
 <style scoped>
