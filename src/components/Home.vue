@@ -72,6 +72,8 @@
 
 <script>
   import {bus} from '../bus.js'
+  import axios from 'axios'
+
   export default {
     name: 'home',
     created(){
@@ -106,6 +108,9 @@
           //type: 'warning'
         }).then(() => {
           sessionStorage.removeItem('access-user');
+          axios.defaults.headers.dagger_token = null;
+          // axios.defaults.headers.Cookie = null;
+
           _this.$router.push('/login');
         }).catch(() => {
 

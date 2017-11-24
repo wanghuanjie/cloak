@@ -17,7 +17,8 @@
 
 <script>
   // import {requestLogin} from '../api/api';
-  import {requestDoLogin} from '../api/api';
+  import {requestDoLogin} from '../api/api';        
+  import axios from 'axios'
   import qs from 'qs';
 
   //import NProgress from 'nprogress'
@@ -67,8 +68,22 @@
                                                                       userId: data.data_collect.userId,
                                                                       account:data.data_collect.account,
                                                                       userName: data.data_collect.userName,
-                                                                      email: data.data_collect.email
+                                                                      email: data.data_collect.email,
+                                                                      token: data.data_collect.token,
+                                                                      sessionId: data.data_collect.sessionId
                                                                     }));
+
+                var currentUser = sessionStorage.getItem('access-user');
+                var token = '';
+                var sessionId = '';
+                if (currentUser) {
+                  currentUser = JSON.parse(currentUser);
+                  token = currentUser.token;
+                  sessionId = currentUser.sessionId;
+                }
+                axios.defaults.withCredentials=true;
+                axios.defaults.headers.dagger_token = token;
+                // axios.defaults.headers.Cookie = 'JSESSIONID='+sessionId;
 
                 this.$router.push({ path: '/' });
               }
