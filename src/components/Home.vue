@@ -109,7 +109,6 @@
         }).then(() => {
           sessionStorage.removeItem('access-user');
           axios.defaults.headers.dagger_token = null;
-          // axios.defaults.headers.Cookie = null;
 
           _this.$router.push('/login');
         }).catch(() => {

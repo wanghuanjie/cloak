@@ -81,10 +81,9 @@
                   token = currentUser.token;
                   sessionId = currentUser.sessionId;
                 }
-                axios.defaults.withCredentials=true;
-                axios.defaults.headers.dagger_token = token;
-                // axios.defaults.headers.Cookie = 'JSESSIONID='+sessionId;
-
+                // axios.defaults.withCredentials=true;
+                axios.defaults.headers.dagger_token = token;//需配合nginx代理
+                
                 this.$router.push({ path: '/' });
               }
             });

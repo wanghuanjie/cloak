@@ -1,18 +1,18 @@
 webpackJsonp([0],{
 
-/***/ 213:
+/***/ 217:
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(217)
-__webpack_require__(218)
+__webpack_require__(221)
+__webpack_require__(222)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(214),
+  __webpack_require__(218),
   /* template */
-  __webpack_require__(219),
+  __webpack_require__(223),
   /* scopeId */
   "data-v-4d865fc8",
   /* cssModules */
@@ -24,14 +24,16 @@ module.exports = Component.exports
 
 /***/ }),
 
-/***/ 214:
+/***/ 218:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(46);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_qs__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_qs__);
 //
 //
 //
@@ -51,6 +53,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 // import {requestLogin} from '../api/api';
+
 
 
 
@@ -80,7 +83,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
           var loginParams = { account: this.account.username, password: this.account.pwd };
 
-          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["a" /* requestDoLogin */])(__WEBPACK_IMPORTED_MODULE_1_qs___default.a.stringify(loginParams)).then(data => {
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["a" /* requestDoLogin */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(loginParams)).then(data => {
             console.log(data);
             this.logining = false;
             //NProgress.done();
@@ -95,8 +98,22 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 userId: data.data_collect.userId,
                 account: data.data_collect.account,
                 userName: data.data_collect.userName,
-                email: data.data_collect.email
+                email: data.data_collect.email,
+                token: data.data_collect.token,
+                sessionId: data.data_collect.sessionId
               }));
+
+              var currentUser = sessionStorage.getItem('access-user');
+              var token = '';
+              var sessionId = '';
+              if (currentUser) {
+                currentUser = JSON.parse(currentUser);
+                token = currentUser.token;
+                sessionId = currentUser.sessionId;
+              }
+              // axios.defaults.withCredentials=true;
+              __WEBPACK_IMPORTED_MODULE_1_axios___default.a.defaults.headers.dagger_token = token;
+              // axios.defaults.headers.Cookie = 'JSESSIONID='+sessionId;
 
               this.$router.push({ path: '/' });
             }
@@ -112,10 +129,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 
-/***/ 215:
+/***/ 219:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(211)();
+exports = module.exports = __webpack_require__(215)();
 // imports
 
 
@@ -127,10 +144,10 @@ exports.push([module.i, "body{background:#dfe9fb}", "", {"version":3,"sources":[
 
 /***/ }),
 
-/***/ 216:
+/***/ 220:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(211)();
+exports = module.exports = __webpack_require__(215)();
 // imports
 
 
@@ -142,35 +159,35 @@ exports.push([module.i, ".login-container[data-v-4d865fc8]{-webkit-border-radius
 
 /***/ }),
 
-/***/ 217:
+/***/ 221:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(215);
+var content = __webpack_require__(219);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(212)("6cdb7780", content, true);
+var update = __webpack_require__(216)("6cdb7780", content, true);
 
 /***/ }),
 
-/***/ 218:
+/***/ 222:
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(216);
+var content = __webpack_require__(220);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(212)("24ade180", content, true);
+var update = __webpack_require__(216)("24ade180", content, true);
 
 /***/ }),
 
-/***/ 219:
+/***/ 223:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -255,4 +272,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 });
-//# sourceMappingURL=0.dc3d73f374986be9f75a.js.map
+//# sourceMappingURL=0.0741e83bae2f791fc0fe.js.map

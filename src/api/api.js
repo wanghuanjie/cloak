@@ -5,8 +5,8 @@ import axios from 'axios'
 
 
 let base = ''
-// let base_user_dir = '/dagger'
-let base_user_dir = 'http://localhost:8100'
+let base_user_dir = '/dagger'
+// let base_user_dir = 'http://localhost:8100'
 
 
 // export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data) }
