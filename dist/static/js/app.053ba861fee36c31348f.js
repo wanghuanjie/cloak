@@ -24,7 +24,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__bus_js__ = __webpack_require__(131);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
 //
 //
@@ -137,7 +137,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }).then(() => {
         sessionStorage.removeItem('access-user');
         __WEBPACK_IMPORTED_MODULE_1_axios___default.a.defaults.headers.dagger_token = null;
-        // axios.defaults.headers.Cookie = null;
 
         _this.$router.push('/login');
       }).catch(() => {});
@@ -159,7 +158,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_qs__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_api__ = __webpack_require__(15);
 //
 //
 //
@@ -202,6 +203,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -209,12 +232,24 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   data() {
     return {
       filters: {
-        roleName: ''
+        privilegeName: ''
       },
       total: 0,
       page: 1,
       loading: false,
-      privileges: []
+      privileges: [],
+      addFormVisible: false, //新增界面是否显示
+      addLoading: false,
+      addFormRules: {
+        privilege_name: [{ required: true, message: '请输入权限名', trigger: 'blur' }],
+        privilege_type: [{ required: true, message: '请输入权限类型', trigger: 'blur' }],
+        privilege_dec: [{ required: true, message: '请输入权限描述', trigger: 'blur' }]
+      },
+      addForm: {
+        privilege_name: '',
+        privilege_dec: '',
+        privilege_type: ''
+      }
     };
   },
   methods: {
@@ -228,16 +263,45 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     //获取权限列表
     getPrivileges: function () {
-      let para = {
-        // roleName: this.filters.roleName
-      };
+      let para = {};
       this.loading = true;
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["d" /* requestDoQueryPrivileges */])(para).then(res => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["d" /* requestDoQueryPrivileges */])(para).then(res => {
         this.total = res.data_count;
         this.privileges = res.data_collect;
         this.loading = false;
-        //NProgress.done();
+      });
+    },
+    showAddDialog: function () {
+      this.addFormVisible = true;
+      this.addForm = {
+        privilege_name: '',
+        privilege_dec: '',
+        privilege_type: ''
+      };
+    },
+    //新增
+    addSubmit: function () {
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          this.addLoading = true;
+
+          let para = {
+            privilegeName: this.addForm.privilege_name,
+            privilegeDec: this.addForm.privilege_dec,
+            privilegeType: this.addForm.privilege_type
+          };
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["e" /* requestDoAddPrivileges */])(__WEBPACK_IMPORTED_MODULE_0_qs___default.a.stringify(para)).then(res => {
+            this.addLoading = false;
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
+            this.$refs['addForm'].resetFields();
+            this.addFormVisible = false;
+            this.getPrivileges();
+          });
+        }
       });
     }
   },
@@ -327,7 +391,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       };
       this.loading = true;
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["e" /* requestDoQueryRoles */])(para).then(res => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["f" /* requestDoQueryRoles */])(para).then(res => {
         this.total = res.data_count;
         this.roles = res.data_collect;
         this.loading = false;
@@ -411,7 +475,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_qs__);
 //
 //
@@ -501,7 +565,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__common_util__ = __webpack_require__(132);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_api__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_qs__);
 //
 //
 //
@@ -543,6 +610,60 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
 
 
 
@@ -555,13 +676,90 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       total: 0,
       page: 1,
       loading: false,
-      users: []
+      sels: [],
+      users: [],
+      roleloading: false,
+      rolesels: [],
+      roletotal: 0,
+      rolepage: 1,
+      roles: [],
+      editLoading: false,
+      editFormRules: {
+        nick_name: [{ required: true, message: '请输入作者', trigger: 'blur' }],
+        description: [{ required: true, message: '请输入简介', trigger: 'blur' }]
+      },
+      editForm: {
+        user_id: 0,
+        nick_name: ''
+      },
+      editFormVisible: false,
+      roleFormVisible: false
     };
   },
   methods: {
     handleCurrentChange(val) {
       this.page = val;
       this.getUser();
+    },
+    handleRoleCurrentChange(val) {
+      this.rolepage = val;
+      this.getRole();
+    },
+    batchDeleteUsers: function () {
+      var ids = this.sels.map(item => item.id).toString();
+      this.$confirm('确认删除选中记录吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        this.loading = true;
+        let para = { ids: ids };
+        console.log(para);
+        // reqBatchDeleteBook(para).then((res) => {
+        //   this.loading = false;
+        //   this.$message({
+        //     message: '删除成功',
+        //     type: 'success'
+        //   });
+        //   this.getUser();
+        // });
+      }).catch(() => {});
+    },
+    showEditDialog: function (index, row) {
+      console.log("editForm");
+      this.editFormVisible = true;
+      this.editForm = Object.assign({}, row);
+    },
+    editSubmit: function () {
+      this.$refs.editForm.validate(valid => {
+        if (valid) {
+          this.$confirm('确认提交吗？', '提示', {}).then(() => {
+            this.editLoading = true;
+            let para = Object.assign({}, this.editForm);
+
+            reqEditBook(para).then(res => {
+              this.editLoading = false;
+              //NProgress.done();
+              this.$message({
+                message: '提交成功',
+                type: 'success'
+              });
+              this.$refs['editForm'].resetFields();
+              this.editFormVisible = false;
+              this.getBooks();
+            });
+          });
+        }
+      });
+    },
+    showRoleDialog: function (index, row) {
+      this.roleFormVisible = true;
+      this.roleForm = Object.assign({}, row);
+      this.getRoles(row);
+    },
+    selsRole: function (val) {
+      console.log(val.role_id);
+    },
+    selsChange: function (sels) {
+      this.sels = sels;
     },
     //性别显示转换
     formatGender: function (row, column) {
@@ -573,10 +771,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         // name: this.filters.name
       };
       this.loading = true;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["f" /* requestDoQueryUsers */])(para).then(res => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["g" /* requestDoQueryUsers */])(para).then(res => {
         this.total = res.data_count;
         this.users = res.data_collect;
         this.loading = false;
+      });
+    },
+    //获取角色列表
+    getRoles: function (row) {
+      let para = {
+        // roleName: this.filters.roleName
+      };
+      this.roleloading = true;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["f" /* requestDoQueryRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(para)).then(res => {
+        this.roletotal = res.data_count;
+        this.roles = res.data_collect;
+        this.roleloading = false;
+
+        let userPara = { userId: row.user_id };
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["h" /* requestDoQueryUserRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(userPara)).then(res => {
+          console.log(userPara);
+          var currentRow = res.data_collect;
+          this.roles.forEach(row => {
+            if (row.role_id == res.data_collect.role_id) {
+              this.$refs.rolesTable.setCurrentRow(row);
+            }
+          });
+        });
       });
     }
   },
@@ -593,7 +814,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_qs__);
 //
 //
@@ -716,6 +937,92 @@ var bus = new __WEBPACK_IMPORTED_MODULE_0_vue__["default"]();
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/**
+ * Created by jerry on 2017/4/14.
+ */
+var SIGN_REGEXP = /([yMdhsm])(\1*)/g;
+var DEFAULT_PATTERN = 'yyyy-MM-dd';
+function padding(s, len) {
+  let l = len - (s + '').length;
+  for (var i = 0; i < l; i++) {
+    s = '0' + s;
+  }
+  return s;
+};
+
+/* unused harmony default export */ var _unused_webpack_default_export = ({
+  getQueryStringByName: function (name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+    var r = window.location.search.substr(1).match(reg);
+    var context = '';
+    if (r != null) {
+      context = r[2];
+    }
+    reg = null;
+    r = null;
+    return context === null || context === '' || context === 'undefined' ? '' : context;
+  },
+  formatDate: {
+
+    format: function (date, pattern) {
+      pattern = pattern || DEFAULT_PATTERN;
+      return pattern.replace(SIGN_REGEXP, function ($0) {
+        switch ($0.charAt(0)) {
+          case 'y':
+            return padding(date.getFullYear(), $0.length);
+          case 'M':
+            return padding(date.getMonth() + 1, $0.length);
+          case 'd':
+            return padding(date.getDate(), $0.length);
+          case 'w':
+            return date.getDay() + 1;
+          case 'h':
+            return padding(date.getHours(), $0.length);
+          case 'm':
+            return padding(date.getMinutes(), $0.length);
+          case 's':
+            return padding(date.getSeconds(), $0.length);
+        }
+      });
+    },
+    parse: function (dateString, pattern) {
+      var matchs1 = pattern.match(SIGN_REGEXP);
+      var matchs2 = dateString.match(/(\d)+/g);
+      if (matchs1.length === matchs2.length) {
+        var _date = new Date(1970, 0, 1);
+        for (var i = 0; i < matchs1.length; i++) {
+          var _int = parseInt(matchs2[i]);
+          var sign = matchs1[i];
+          switch (sign.charAt(0)) {
+            case 'y':
+              _date.setFullYear(_int);break;
+            case 'M':
+              _date.setMonth(_int - 1);break;
+            case 'd':
+              _date.setDate(_int);break;
+            case 'h':
+              _date.setHours(_int);break;
+            case 'm':
+              _date.setMinutes(_int);break;
+            case 's':
+              _date.setSeconds(_int);break;
+          }
+        }
+        return _date;
+      }
+      return null;
+    }
+
+  }
+
+});
+
+/***/ }),
+
+/***/ 133:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__App__ = __webpack_require__(82);
@@ -759,7 +1066,7 @@ new __WEBPACK_IMPORTED_MODULE_0_vue__["default"]({
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
 /**
  * Created by jerry on 2017/4/13.
@@ -844,13 +1151,23 @@ const requestDoChangePwd = params => {
 const requestDoQueryUsers = params => {
       return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base_user_dir}/usermanage/doquery`, params).then(res => res.data);
 };
-/* harmony export (immutable) */ __webpack_exports__["f"] = requestDoQueryUsers;
+/* harmony export (immutable) */ __webpack_exports__["g"] = requestDoQueryUsers;
 
 
 const requestDoQueryRoles = params => {
       return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base_user_dir}/rolemanage/doqueryroles`, params).then(res => res.data);
 };
-/* harmony export (immutable) */ __webpack_exports__["e"] = requestDoQueryRoles;
+/* harmony export (immutable) */ __webpack_exports__["f"] = requestDoQueryRoles;
+
+
+const requestDoQueryUserRoles = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/rolemanage/doqueryrolebyuser`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["h"] = requestDoQueryUserRoles;
 
 
 const requestDoQueryPrivileges = params => {
@@ -859,12 +1176,15 @@ const requestDoQueryPrivileges = params => {
 /* harmony export (immutable) */ __webpack_exports__["d"] = requestDoQueryPrivileges;
 
 
-/***/ }),
+const requestDoAddPrivileges = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/privilegemanage/doaddprivilege`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["e"] = requestDoAddPrivileges;
 
-/***/ 183:
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
 
 /***/ }),
 
@@ -903,53 +1223,37 @@ const requestDoQueryPrivileges = params => {
 
 /***/ }),
 
-/***/ 194:
+/***/ 189:
 /***/ (function(module, exports) {
 
-module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAoCAMAAACPWYlDAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTY0QkU5RjdCRDdCMTFFNzk3QzRFNkE5MUZBODE0MTEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTY0QkU5RjhCRDdCMTFFNzk3QzRFNkE5MUZBODE0MTEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NjRCRTlGNUJEN0IxMUU3OTdDNEU2QTkxRkE4MTQxMSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5NjRCRTlGNkJEN0IxMUU3OTdDNEU2QTkxRkE4MTQxMSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PokMrpoAAADMUExURf+KAP/+/P+3Yv+QDv/+/f+3Y/+1Xf+5Zv+6aP+4ZP+0W/+TFP/kxP+1Xv+mPf/ZrP+0XP+LAv/pzv+5Z/+KAf/hvv+rSP/kxf+vUP+aI/+2X/+tTf+YH//Nkf/ar/+6af/Ce/+4Zf/05//Ih/+sS/+UFf/Mj//Yq/+SEf/Wpf/79v/z5P+VF/+TE//u2v+zWv+uT//Nk/+VGP+9cP+sSv+jN//Jiv/Zrf/16f/w3//9+//26//et/+ZIP/QmP+NBv+OCf+PCv/69f///zZGOK8AAABEdFJOU/////////////////////////////////////////////////////////////////////////////////////////8AcdKPEgAAAO1JREFUeNrM1UUWAjEQBNAKg7u7u7u73P9ODAzBpXsDZP/fG6mqYMc8+BKocEG/wwRLDHlgtkKa99IOQDflAC8AZ43zWYOqaIwYwOtXBYL2KvnHtaCdFBVklZMwU6ORAElcgN5JElfhm5Sl8BHTmvQTxE28cxLAROxD0fNR3BXItZaiXSiRGheynR+rTqtoMyJBXtA6PR5IERW0EdiGpXAI2mrMPVBiR2EUJGCDYtfrXohnwLUIqdF6Id4MmSbcgr58hmfi7VRqwiro22p5FB/GWBMGxnpnDqDLmXsTsAmw7odePPCLG+ivwF6AAQCmZbmHtqZxzQAAAABJRU5ErkJggg=="
+// removed by extract-text-webpack-plugin
 
 /***/ }),
 
 /***/ 195:
 /***/ (function(module, exports) {
 
-module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAATCAMAAADruNB/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QTBDQzMxQUFCRDdCMTFFNzkzNTNCNjJDQ0I4NjMxRkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QTBDQzMxQUJCRDdCMTFFNzkzNTNCNjJDQ0I4NjMxRkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBMENDMzFBOEJEN0IxMUU3OTM1M0I2MkNDQjg2MzFGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBMENDMzFBOUJEN0IxMUU3OTM1M0I2MkNDQjg2MzFGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pmy10/8AAAAGUExURf+KAP///7pLnCIAAAACdFJOU/8A5bcwSgAAAItJREFUeNrsk90OgCAIhfH9X7rFOnBAcG25usmtdAqfhx9l7Bqyj6Tjvu35n7ZxWhw2IP2WpMsIS3KBDCIEW+jQc7gbRcJkMoiEbXJhTX5zORUkc8E6pCAjPLCCZOKDpl7MaKOTKbrpjipPC+GsH53V1S71E9Uu5D/3vJfl0WsJrfLRu/tJL5MOAQYAvYUELzFXdpcAAAAASUVORK5CYII="
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAoCAMAAACPWYlDAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OTY0QkU5RjdCRDdCMTFFNzk3QzRFNkE5MUZBODE0MTEiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OTY0QkU5RjhCRDdCMTFFNzk3QzRFNkE5MUZBODE0MTEiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5NjRCRTlGNUJEN0IxMUU3OTdDNEU2QTkxRkE4MTQxMSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5NjRCRTlGNkJEN0IxMUU3OTdDNEU2QTkxRkE4MTQxMSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PokMrpoAAADMUExURf+KAP/+/P+3Yv+QDv/+/f+3Y/+1Xf+5Zv+6aP+4ZP+0W/+TFP/kxP+1Xv+mPf/ZrP+0XP+LAv/pzv+5Z/+KAf/hvv+rSP/kxf+vUP+aI/+2X/+tTf+YH//Nkf/ar/+6af/Ce/+4Zf/05//Ih/+sS/+UFf/Mj//Yq/+SEf/Wpf/79v/z5P+VF/+TE//u2v+zWv+uT//Nk/+VGP+9cP+sSv+jN//Jiv/Zrf/16f/w3//9+//26//et/+ZIP/QmP+NBv+OCf+PCv/69f///zZGOK8AAABEdFJOU/////////////////////////////////////////////////////////////////////////////////////////8AcdKPEgAAAO1JREFUeNrM1UUWAjEQBNAKg7u7u7u73P9ODAzBpXsDZP/fG6mqYMc8+BKocEG/wwRLDHlgtkKa99IOQDflAC8AZ43zWYOqaIwYwOtXBYL2KvnHtaCdFBVklZMwU6ORAElcgN5JElfhm5Sl8BHTmvQTxE28cxLAROxD0fNR3BXItZaiXSiRGheynR+rTqtoMyJBXtA6PR5IERW0EdiGpXAI2mrMPVBiR2EUJGCDYtfrXohnwLUIqdF6Id4MmSbcgr58hmfi7VRqwiro22p5FB/GWBMGxnpnDqDLmXsTsAmw7odePPCLG+ivwF6AAQCmZbmHtqZxzQAAAABJRU5ErkJggg=="
 
 /***/ }),
 
 /***/ 196:
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-var Component = __webpack_require__(4)(
-  /* script */
-  null,
-  /* template */
-  __webpack_require__(212),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-
-module.exports = Component.exports
-
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEkAAAATCAMAAADruNB/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QTBDQzMxQUFCRDdCMTFFNzkzNTNCNjJDQ0I4NjMxRkMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QTBDQzMxQUJCRDdCMTFFNzkzNTNCNjJDQ0I4NjMxRkMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpBMENDMzFBOEJEN0IxMUU3OTM1M0I2MkNDQjg2MzFGQyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpBMENDMzFBOUJEN0IxMUU3OTM1M0I2MkNDQjg2MzFGQyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pmy10/8AAAAGUExURf+KAP///7pLnCIAAAACdFJOU/8A5bcwSgAAAItJREFUeNrsk90OgCAIhfH9X7rFOnBAcG25usmtdAqfhx9l7Bqyj6Tjvu35n7ZxWhw2IP2WpMsIS3KBDCIEW+jQc7gbRcJkMoiEbXJhTX5zORUkc8E6pCAjPLCCZOKDpl7MaKOTKbrpjipPC+GsH53V1S71E9Uu5D/3vJfl0WsJrfLRu/tJL5MOAQYAvYUELzFXdpcAAAAASUVORK5CYII="
 
 /***/ }),
 
 /***/ 197:
 /***/ (function(module, exports, __webpack_require__) {
 
-
-/* styles */
-__webpack_require__(188)
-
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(124),
+  null,
   /* template */
-  __webpack_require__(211),
+  __webpack_require__(213),
   /* scopeId */
-  "data-v-b29abe60",
+  null,
   /* cssModules */
   null
 )
@@ -964,15 +1268,15 @@ module.exports = Component.exports
 
 
 /* styles */
-__webpack_require__(186)
+__webpack_require__(189)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(125),
+  __webpack_require__(124),
   /* template */
-  __webpack_require__(207),
+  __webpack_require__(212),
   /* scopeId */
-  "data-v-6da8e166",
+  "data-v-b29abe60",
   /* cssModules */
   null
 )
@@ -987,15 +1291,15 @@ module.exports = Component.exports
 
 
 /* styles */
-__webpack_require__(184)
+__webpack_require__(187)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(126),
+  __webpack_require__(125),
   /* template */
-  __webpack_require__(205),
+  __webpack_require__(208),
   /* scopeId */
-  "data-v-4ef24ed4",
+  "data-v-6da8e166",
   /* cssModules */
   null
 )
@@ -1014,11 +1318,11 @@ __webpack_require__(185)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(127),
+  __webpack_require__(126),
   /* template */
   __webpack_require__(206),
   /* scopeId */
-  "data-v-6a14edf6",
+  "data-v-4ef24ed4",
   /* cssModules */
   null
 )
@@ -1031,9 +1335,74 @@ module.exports = Component.exports
 /***/ 201:
 /***/ (function(module, exports, __webpack_require__) {
 
+
+/* styles */
+__webpack_require__(186)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(127),
+  /* template */
+  __webpack_require__(207),
+  /* scopeId */
+  "data-v-6a14edf6",
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 202:
+/***/ (function(module, exports, __webpack_require__) {
+
 var Component = __webpack_require__(4)(
   /* script */
   __webpack_require__(128),
+  /* template */
+  __webpack_require__(210),
+  /* scopeId */
+  null,
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 203:
+/***/ (function(module, exports, __webpack_require__) {
+
+
+/* styles */
+__webpack_require__(184)
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(129),
+  /* template */
+  __webpack_require__(205),
+  /* scopeId */
+  "data-v-18505ce1",
+  /* cssModules */
+  null
+)
+
+module.exports = Component.exports
+
+
+/***/ }),
+
+/***/ 204:
+/***/ (function(module, exports, __webpack_require__) {
+
+var Component = __webpack_require__(4)(
+  /* script */
+  __webpack_require__(130),
   /* template */
   __webpack_require__(209),
   /* scopeId */
@@ -1047,49 +1416,7 @@ module.exports = Component.exports
 
 /***/ }),
 
-/***/ 202:
-/***/ (function(module, exports, __webpack_require__) {
-
-
-/* styles */
-__webpack_require__(183)
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(129),
-  /* template */
-  __webpack_require__(204),
-  /* scopeId */
-  "data-v-18505ce1",
-  /* cssModules */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-
-/***/ 203:
-/***/ (function(module, exports, __webpack_require__) {
-
-var Component = __webpack_require__(4)(
-  /* script */
-  __webpack_require__(130),
-  /* template */
-  __webpack_require__(208),
-  /* scopeId */
-  null,
-  /* cssModules */
-  null
-)
-
-module.exports = Component.exports
-
-
-/***/ }),
-
-/***/ 204:
+/***/ 205:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1162,8 +1489,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "data": _vm.users,
       "highlight-current-row": ""
+    },
+    on: {
+      "selection-change": _vm.selsChange
     }
   }, [_c('el-table-column', {
+    staticStyle: {
+      "width": "5%"
+    },
+    attrs: {
+      "type": "selection"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
     staticStyle: {
       "width": "10%"
     },
@@ -1173,7 +1510,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }), _vm._v(" "), _c('el-table-column', {
     staticStyle: {
-      "width": "30%"
+      "width": "20%"
     },
     attrs: {
       "prop": "nick_name",
@@ -1199,6 +1536,199 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "label": "邮件",
       "sortable": ""
     }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "20%"
+    },
+    attrs: {
+      "label": "操作"
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function(scope) {
+        return [_c('el-button', {
+          attrs: {
+            "size": "small"
+          },
+          on: {
+            "click": function($event) {
+              _vm.showEditDialog(scope.$user_id, scope.row)
+            }
+          }
+        }, [_vm._v("编辑")]), _vm._v(" "), _c('el-button', {
+          attrs: {
+            "size": "small"
+          },
+          on: {
+            "click": function($event) {
+              _vm.showRoleDialog(scope.$user_id, scope.row)
+            }
+          }
+        }, [_vm._v("角色")]), _vm._v(" "), _c('el-button', {
+          attrs: {
+            "size": "small",
+            "type": "danger"
+          },
+          on: {
+            "click": function($event) {
+              _vm.delUser(scope.$user_id, scope.row)
+            }
+          }
+        }, [_vm._v("删除")])]
+      }
+    }])
+  })], 1), _vm._v(" "), _c('el-col', {
+    staticClass: "toolbar",
+    attrs: {
+      "span": 24
+    }
+  }, [_c('el-button', {
+    attrs: {
+      "type": "danger",
+      "disabled": this.sels.length === 0
+    },
+    on: {
+      "click": _vm.batchDeleteUsers
+    }
+  }, [_vm._v("批量删除")]), _vm._v(" "), _c('el-pagination', {
+    staticStyle: {
+      "float": "right"
+    },
+    attrs: {
+      "layout": "prev, pager, next",
+      "page-size": 10,
+      "total": _vm.total
+    },
+    on: {
+      "current-change": _vm.handleCurrentChange
+    }
+  })], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "编辑",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.editFormVisible),
+      callback: function($$v) {
+        _vm.editFormVisible = $$v
+      },
+      expression: "editFormVisible"
+    }
+  }, [_c('el-form', {
+    directives: [{
+      name: "loading",
+      rawName: "v-loading",
+      value: (_vm.editLoading),
+      expression: "editLoading"
+    }],
+    ref: "editForm",
+    attrs: {
+      "model": _vm.editForm,
+      "label-width": "100px",
+      "rules": _vm.editFormRules
+    }
+  }, [_c('el-form-item', {
+    attrs: {
+      "label": "id",
+      "prop": "user_id"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off",
+      "readonly": ""
+    },
+    model: {
+      value: (_vm.editForm.user_id),
+      callback: function($$v) {
+        _vm.$set(_vm.editForm, "user_id", $$v)
+      },
+      expression: "editForm.user_id"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "姓名",
+      "prop": "nick_name"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.editForm.nick_name),
+      callback: function($$v) {
+        _vm.$set(_vm.editForm, "nick_name", $$v)
+      },
+      expression: "editForm.nick_name"
+    }
+  })], 1)], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.editFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.editLoading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.editSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "角色管理",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.roleFormVisible),
+      callback: function($$v) {
+        _vm.roleFormVisible = $$v
+      },
+      expression: "roleFormVisible"
+    }
+  }, [_c('el-table', {
+    directives: [{
+      name: "loading",
+      rawName: "v-loading",
+      value: (_vm.roleloading),
+      expression: "roleloading"
+    }],
+    ref: "rolesTable",
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "data": _vm.roles,
+      "highlight-current-row": ""
+    },
+    on: {
+      "current-change": _vm.selsRole
+    }
+  }, [_c('el-table-column', {
+    staticStyle: {
+      "width": "20%"
+    },
+    attrs: {
+      "type": "role_id",
+      "prop": "role_id"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "40%"
+    },
+    attrs: {
+      "prop": "role_name",
+      "label": "角色名",
+      "sortable": ""
+    }
   })], 1), _vm._v(" "), _c('el-col', {
     staticClass: "toolbar",
     attrs: {
@@ -1211,17 +1741,39 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "layout": "prev, pager, next",
       "page-size": 10,
-      "total": _vm.total
+      "total": _vm.roletotal
     },
     on: {
-      "current-change": _vm.handleCurrentChange
+      "current-change": _vm.handleRoleCurrentChange
     }
-  })], 1)], 1)], 1)
+  })], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.roleFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.editLoading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.roleSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1)], 1)], 1)
 },staticRenderFns: []}
 
 /***/ }),
 
-/***/ 205:
+/***/ 206:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1362,7 +1914,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ }),
 
-/***/ 206:
+/***/ 207:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1434,7 +1986,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ }),
 
-/***/ 207:
+/***/ 208:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1494,7 +2046,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.getPrivileges
     }
-  }, [_vm._v("查询")])], 1)], 1)], 1), _vm._v(" "), _c('el-table', {
+  }, [_vm._v("查询")])], 1), _vm._v(" "), _c('el-form-item', [_c('el-button', {
+    attrs: {
+      "type": "primary"
+    },
+    on: {
+      "click": _vm.showAddDialog
+    }
+  }, [_vm._v("新增")])], 1)], 1)], 1), _vm._v(" "), _c('el-table', {
     directives: [{
       name: "loading",
       rawName: "v-loading",
@@ -1570,12 +2129,102 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "current-change": _vm.handleCurrentChange
     }
-  })], 1)], 1)], 1)
+  })], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "新增",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.addFormVisible),
+      callback: function($$v) {
+        _vm.addFormVisible = $$v
+      },
+      expression: "addFormVisible"
+    }
+  }, [_c('el-form', {
+    ref: "addForm",
+    attrs: {
+      "model": _vm.addForm,
+      "label-width": "80px",
+      "rules": _vm.addFormRules
+    }
+  }, [_c('el-form-item', {
+    attrs: {
+      "label": "权限名",
+      "prop": "privilege_name"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.addForm.privilege_name),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "privilege_name", $$v)
+      },
+      expression: "addForm.privilege_name"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "权限类型",
+      "prop": "privilege_type"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.addForm.privilege_type),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "privilege_type", $$v)
+      },
+      expression: "addForm.privilege_type"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "权限描述",
+      "prop": "privilege_dec"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "type": "textarea",
+      "rows": 8
+    },
+    model: {
+      value: (_vm.addForm.privilege_dec),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "privilege_dec", $$v)
+      },
+      expression: "addForm.privilege_dec"
+    }
+  })], 1)], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.addFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.addLoading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.addSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1)], 1)], 1)
 },staticRenderFns: []}
 
 /***/ }),
 
-/***/ 208:
+/***/ 209:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1663,7 +2312,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ }),
 
-/***/ 209:
+/***/ 210:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1741,7 +2390,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ }),
 
-/***/ 210:
+/***/ 211:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1754,7 +2403,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ }),
 
-/***/ 211:
+/***/ 212:
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1776,7 +2425,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "padding-left": "8px"
     },
     attrs: {
-      "src": __webpack_require__(194)
+      "src": __webpack_require__(195)
     }
   })])]), _vm._v(" "), _c('div', {
     directives: [{
@@ -1796,7 +2445,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "height": "100%"
     },
     attrs: {
-      "src": __webpack_require__(195)
+      "src": __webpack_require__(196)
     }
   })])]), _vm._v(" "), _c('div', {
     staticClass: "topbar-title"
@@ -1949,7 +2598,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 /***/ }),
 
-/***/ 212:
+/***/ 213:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1980,22 +2629,22 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(213);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Home__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vue_router__ = __webpack_require__(214);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Home__ = __webpack_require__(198);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__components_Home___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__components_Home__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dashboard__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dashboard__ = __webpack_require__(197);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__components_Dashboard___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3__components_Dashboard__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_role_list__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_role_list__ = __webpack_require__(200);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__components_role_list___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__components_role_list__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_privilege_list__ = __webpack_require__(198);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_privilege_list__ = __webpack_require__(199);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__components_privilege_list___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__components_privilege_list__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_user_list__ = __webpack_require__(202);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_user_list__ = __webpack_require__(203);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_user_list___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__components_user_list__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_user_changepwd__ = __webpack_require__(201);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_user_changepwd__ = __webpack_require__(202);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_user_changepwd___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__components_user_changepwd__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_user_profile__ = __webpack_require__(203);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_user_profile__ = __webpack_require__(204);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__components_user_profile___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__components_user_profile__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_statistics_user__ = __webpack_require__(200);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_statistics_user__ = __webpack_require__(201);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__components_statistics_user___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_9__components_statistics_user__);
 
 
@@ -2012,7 +2661,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 
 
 // 懒加载方式，当路由被访问的时候才加载对应组件
-const Login = resolve => __webpack_require__.e/* require */(0).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(217)]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this)).catch(__webpack_require__.oe);
+const Login = resolve => __webpack_require__.e/* require */(0).then(function() { var __WEBPACK_AMD_REQUIRE_ARRAY__ = [__webpack_require__(218)]; (resolve.apply(null, __WEBPACK_AMD_REQUIRE_ARRAY__));}.bind(this)).catch(__webpack_require__.oe);
 
 __WEBPACK_IMPORTED_MODULE_0_vue__["default"].use(__WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]);
 
@@ -2115,13 +2764,13 @@ router.beforeEach((to, from, next) => {
 
 
 /* styles */
-__webpack_require__(187)
+__webpack_require__(188)
 
 var Component = __webpack_require__(4)(
   /* script */
   __webpack_require__(123),
   /* template */
-  __webpack_require__(210),
+  __webpack_require__(211),
   /* scopeId */
   null,
   /* cssModules */
@@ -2133,5 +2782,5 @@ module.exports = Component.exports
 
 /***/ })
 
-},[132]);
-//# sourceMappingURL=app.54e4bf6230a173c21c09.js.map
+},[133]);
+//# sourceMappingURL=app.053ba861fee36c31348f.js.map

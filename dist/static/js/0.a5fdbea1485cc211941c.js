@@ -1,18 +1,18 @@
 webpackJsonp([0],{
 
-/***/ 217:
+/***/ 218:
 /***/ (function(module, exports, __webpack_require__) {
 
 
 /* styles */
-__webpack_require__(221)
 __webpack_require__(222)
+__webpack_require__(223)
 
 var Component = __webpack_require__(4)(
   /* script */
-  __webpack_require__(218),
+  __webpack_require__(219),
   /* template */
-  __webpack_require__(223),
+  __webpack_require__(224),
   /* scopeId */
   "data-v-4d865fc8",
   /* cssModules */
@@ -24,15 +24,15 @@ module.exports = Component.exports
 
 /***/ }),
 
-/***/ 218:
+/***/ 219:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs__ = __webpack_require__(17);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_qs__);
 //
 //
@@ -112,8 +112,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 sessionId = currentUser.sessionId;
               }
               // axios.defaults.withCredentials=true;
-              __WEBPACK_IMPORTED_MODULE_1_axios___default.a.defaults.headers.dagger_token = token;
-              // axios.defaults.headers.Cookie = 'JSESSIONID='+sessionId;
+              __WEBPACK_IMPORTED_MODULE_1_axios___default.a.defaults.headers.dagger_token = token; //需配合nginx代理
 
               this.$router.push({ path: '/' });
             }
@@ -129,10 +128,10 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /***/ }),
 
-/***/ 219:
+/***/ 220:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(215)();
+exports = module.exports = __webpack_require__(216)();
 // imports
 
 
@@ -144,10 +143,10 @@ exports.push([module.i, "body{background:#dfe9fb}", "", {"version":3,"sources":[
 
 /***/ }),
 
-/***/ 220:
+/***/ 221:
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(215)();
+exports = module.exports = __webpack_require__(216)();
 // imports
 
 
@@ -156,20 +155,6 @@ exports.push([module.i, ".login-container[data-v-4d865fc8]{-webkit-border-radius
 
 // exports
 
-
-/***/ }),
-
-/***/ 221:
-/***/ (function(module, exports, __webpack_require__) {
-
-// style-loader: Adds some css to the DOM by adding a <style> tag
-
-// load the styles
-var content = __webpack_require__(219);
-if(typeof content === 'string') content = [[module.i, content, '']];
-if(content.locals) module.exports = content.locals;
-// add the styles to the DOM
-var update = __webpack_require__(216)("6cdb7780", content, true);
 
 /***/ }),
 
@@ -183,11 +168,25 @@ var content = __webpack_require__(220);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(216)("24ade180", content, true);
+var update = __webpack_require__(217)("6cdb7780", content, true);
 
 /***/ }),
 
 /***/ 223:
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(221);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(217)("24ade180", content, true);
+
+/***/ }),
+
+/***/ 224:
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -272,4 +271,4 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 /***/ })
 
 });
-//# sourceMappingURL=0.0741e83bae2f791fc0fe.js.map
+//# sourceMappingURL=0.a5fdbea1485cc211941c.js.map

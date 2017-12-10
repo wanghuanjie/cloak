@@ -48,5 +48,16 @@ export const requestDoQueryUsers = params => { return axios.get(`${base_user_dir
 
 export const requestDoQueryRoles = params => { return axios.get(`${base_user_dir}/rolemanage/doqueryroles`, params).then(res => res.data) }
 
+export const requestDoQueryUserRoles = params => { return axios.post(`${base_user_dir}/rolemanage/doqueryrolebyuser`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
+
 export const requestDoQueryPrivileges = params => { return axios.get(`${base_user_dir}/privilegemanage/queryprivileges`, params).then(res => res.data) }
 
+export const requestDoAddPrivileges = params => { return axios.post(`${base_user_dir}/privilegemanage/doaddprivilege`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
