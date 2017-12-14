@@ -158,9 +158,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_qs__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_api__ = __webpack_require__(15);
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -242,20 +251,28 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       addLoading: false,
       addFormRules: {
         privilege_name: [{ required: true, message: '请输入权限名', trigger: 'blur' }],
-        privilege_type: [{ required: true, message: '请输入权限类型', trigger: 'blur' }],
         privilege_dec: [{ required: true, message: '请输入权限描述', trigger: 'blur' }]
       },
       addForm: {
         privilege_name: '',
         privilege_dec: '',
-        privilege_type: ''
-      }
+        privilege_type: '',
+        parent_id: ''
+      },
+      radio_type: '二级权限',
+      type_val: 2,
+      disableVal: false,
+      options: []
     };
   },
   methods: {
-    handleCurrentChange(val) {
+    handleCurrentChange: function (val) {
       this.page = val;
       this.getPrivileges();
+    },
+    //状态显示转换
+    formatType: function (row, column) {
+      return row.privilege_type == '2' ? '二级权限' : '三级权限';
     },
     //状态显示转换
     formatStatus: function (row, column) {
@@ -289,7 +306,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           let para = {
             privilegeName: this.addForm.privilege_name,
             privilegeDec: this.addForm.privilege_dec,
-            privilegeType: this.addForm.privilege_type
+            privilegeType: this.type_val,
+            parentId: this.addForm.parent_id
           };
           __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["e" /* requestDoAddPrivileges */])(__WEBPACK_IMPORTED_MODULE_0_qs___default.a.stringify(para)).then(res => {
             this.addLoading = false;
@@ -303,6 +321,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
           });
         }
       });
+    },
+    typeChange: function () {
+      if ("二级权限" == this.radio_type) {
+        this.disableVal = false;
+        this.type_val = 2;
+        this.options = [];
+      } else {
+        this.disableVal = true;
+        this.type_val = 3;
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["f" /* requestDoQuerySecLevelPrivileges */])({}).then(res => {
+          this.options = [];
+          this.options = res.data_collect;
+          console.log(this.options);
+        });
+      }
     }
   },
   mounted() {
@@ -317,7 +350,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_qs__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_api__ = __webpack_require__(15);
 //
 //
 //
@@ -360,6 +395,50 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -372,11 +451,31 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       total: 0,
       page: 1,
       loading: false,
-      roles: []
+      roles: [],
+      currentRoleId: -1,
+
+      privilegeFormVisible: false,
+      privilegeloading: false,
+      privilegesels: [],
+      privilegetotal: 0,
+      privilegepage: 1,
+      privileges: [],
+      selsPrivilegeIds: [],
+
+      addFormVisible: false, //新增界面是否显示
+      addLoading: false,
+      addFormRules: {
+        role_name: [{ required: true, message: '请输入角色名', trigger: 'blur' }],
+        role_dec: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
+      },
+      addForm: {
+        role_name: '',
+        role_dec: ''
+      }
     };
   },
   methods: {
-    handleCurrentChange(val) {
+    handleCurrentChange: function (val) {
       this.page = val;
       this.getRoles();
     },
@@ -391,11 +490,104 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       };
       this.loading = true;
 
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__api_api__["f" /* requestDoQueryRoles */])(para).then(res => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["g" /* requestDoQueryRoles */])(para).then(res => {
         this.total = res.data_count;
         this.roles = res.data_collect;
         this.loading = false;
-        //NProgress.done();
+      });
+    },
+    handlePrivilegeCurrentChange: function (val) {
+      this.privilegepage = val;
+      this.getRoles();
+    },
+    showPrivilegeDialog: function (index, row) {
+      this.privilegeFormVisible = true;
+      this.privilegeForm = Object.assign({}, row);
+      this.getPrivileges(row);
+    },
+    selsPrivilege: function (privilegesels) {
+      if (privilegesels.length > 0) {
+        this.privilegesels = privilegesels;
+        this.selsPrivilegeIds = [];
+        privilegesels.forEach(row => {
+          this.selsPrivilegeIds.push(row.privilege_id);
+          console.log(this.selsPrivilegeIds);
+        });
+      }
+    },
+    getPrivileges: function (row) {
+      let para = {
+        privilege_type: 3
+      };
+      this.roleloading = true;
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["d" /* requestDoQueryPrivileges */])(__WEBPACK_IMPORTED_MODULE_0_qs___default.a.stringify(para)).then(res => {
+        this.privilegetotal = res.data_count;
+        this.privileges = res.data_collect;
+        this.privilegeloading = false;
+        console.log(row);
+        this.currentRoleId = row.role_id;
+
+        let rolePara = { roleId: this.currentRoleId };
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["h" /* requestDoQueryRolePrivileges */])(__WEBPACK_IMPORTED_MODULE_0_qs___default.a.stringify(rolePara)).then(res => {
+          var currentRows = res.data_collect;
+
+          if (null != currentRows && undefined != currentRows && '' != currentRows) {
+            this.privileges.forEach(row => {
+              currentRows.forEach(prow => {
+                if (row.privilege_id == prow.privilege_id) {
+                  // this.$refs.rolesTable.setCurrentRow(row);
+                  this.$refs.privilegesTable.toggleRowSelection(row);
+                }
+              });
+            });
+          }
+        });
+      });
+    },
+    privilegeSubmit: function () {
+      let para = {
+        privilegeIds: JSON.stringify(this.selsPrivilegeIds),
+        roleId: this.currentRoleId
+      };
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["i" /* requestDoBindRolePrivileges */])(__WEBPACK_IMPORTED_MODULE_0_qs___default.a.stringify(para)).then(res => {
+        this.privilegeloading = false;
+        this.$message({
+          message: '提交成功',
+          type: 'success'
+        });
+        this.privilegeFormVisible = false;
+        this.getRoles();
+      });
+    },
+    //显示新增窗口
+    showAddDialog: function () {
+      this.addFormVisible = true;
+      this.addForm = {
+        role_name: '',
+        role_dec: ''
+      };
+    },
+    //新增
+    addSubmit: function () {
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          this.addLoading = true;
+
+          let para = {
+            roleName: this.addForm.role_name,
+            roleDec: this.addForm.role_dec
+          };
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["j" /* requestDoAddRoles */])(__WEBPACK_IMPORTED_MODULE_0_qs___default.a.stringify(para)).then(res => {
+            this.addLoading = false;
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
+            this.$refs['addForm'].resetFields();
+            this.privilegeFormVisible = false;
+            this.getRoles();
+          });
+        }
       });
     }
   },
@@ -475,7 +667,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_qs__);
 //
 //
@@ -567,8 +759,38 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__common_util__ = __webpack_require__(132);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_qs__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -678,11 +900,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       loading: false,
       sels: [],
       users: [],
+      currentUserId: -1,
+
+      roleFormVisible: false,
       roleloading: false,
       rolesels: [],
       roletotal: 0,
       rolepage: 1,
+      selsRoleId: -1,
       roles: [],
+
       editLoading: false,
       editFormRules: {
         nick_name: [{ required: true, message: '请输入作者', trigger: 'blur' }],
@@ -693,15 +920,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         nick_name: ''
       },
       editFormVisible: false,
-      roleFormVisible: false
+
+      addFormVisible: false, //新增界面是否显示
+      addLoading: false,
+      addFormRules: {
+        account: [{ required: true, message: '请输入账号', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+        email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }]
+      },
+      addForm: {
+        account: '',
+        password: '',
+        email: ''
+      },
+      radio_gender: '男',
+      gender: 'MALE'
     };
   },
   methods: {
-    handleCurrentChange(val) {
+    handleCurrentChange: function (val) {
       this.page = val;
       this.getUser();
     },
-    handleRoleCurrentChange(val) {
+    handleRoleCurrentChange: function (val) {
       this.rolepage = val;
       this.getRole();
     },
@@ -750,13 +991,46 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         }
       });
     },
-    showRoleDialog: function (index, row) {
-      this.roleFormVisible = true;
-      this.roleForm = Object.assign({}, row);
-      this.getRoles(row);
+    showAddDialog: function () {
+      this.addFormVisible = true;
+      this.addForm = {
+        account: '',
+        password: '',
+        email: ''
+      };
+      this.radio_gender = '男';
     },
-    selsRole: function (val) {
-      console.log(val.role_id);
+    //新增
+    addSubmit: function () {
+      this.$refs.addForm.validate(valid => {
+        if (valid) {
+          this.addLoading = true;
+
+          let para = {
+            account: this.addForm.account,
+            password: this.addForm.password,
+            email: this.addForm.email,
+            gender: this.gender
+          };
+          __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["k" /* requestDoRegisterUser */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(para)).then(res => {
+            this.addLoading = false;
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
+            this.$refs['addForm'].resetFields();
+            this.addFormVisible = false;
+            this.getUser();
+          });
+        }
+      });
+    },
+    genderChange: function () {
+      if ("男" == this.radio_gender) {
+        this.gender = 'MALE';
+      } else {
+        this.gender = 'FEMALE';
+      }
     },
     selsChange: function (sels) {
       this.sels = sels;
@@ -767,37 +1041,60 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     },
     //获取用户列表
     getUser: function () {
-      let para = {
-        // name: this.filters.name
-      };
+      let para = {};
       this.loading = true;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["g" /* requestDoQueryUsers */])(para).then(res => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["l" /* requestDoQueryUsers */])(para).then(res => {
         this.total = res.data_count;
         this.users = res.data_collect;
         this.loading = false;
       });
     },
+    showRoleDialog: function (index, row) {
+      this.roleFormVisible = true;
+      this.roleForm = Object.assign({}, row);
+      this.getRoles(row);
+    },
+    selsRoleChange: function (csels) {
+      if (csels != null && csels != undefined && csels != '') {
+        this.selsRoleId = csels.role_id;
+      }
+    },
     //获取角色列表
     getRoles: function (row) {
-      let para = {
-        // roleName: this.filters.roleName
-      };
+      let para = {};
       this.roleloading = true;
-      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["f" /* requestDoQueryRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(para)).then(res => {
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["g" /* requestDoQueryRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(para)).then(res => {
         this.roletotal = res.data_count;
         this.roles = res.data_collect;
         this.roleloading = false;
+        this.currentUserId = row.user_id;
 
-        let userPara = { userId: row.user_id };
-        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["h" /* requestDoQueryUserRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(userPara)).then(res => {
-          console.log(userPara);
-          var currentRow = res.data_collect;
-          this.roles.forEach(row => {
-            if (row.role_id == res.data_collect.role_id) {
-              this.$refs.rolesTable.setCurrentRow(row);
-            }
-          });
+        let userPara = { userId: this.currentUserId };
+        __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["m" /* requestDoQueryUserRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(userPara)).then(res => {
+          var currentRows = res.data_collect;
+          if (null != currentRows && undefined != currentRows && '' != currentRows) {
+            this.roles.forEach(row => {
+              if (row.role_id == currentRows.role_id) {
+                this.$refs.rolesTable.setCurrentRow(row);
+              }
+            });
+          }
         });
+      });
+    },
+    roleSubmit: function () {
+      let para = {
+        userId: this.currentUserId,
+        roleId: this.selsRoleId
+      };
+      __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__api_api__["n" /* requestDoBindUserRoles */])(__WEBPACK_IMPORTED_MODULE_2_qs___default.a.stringify(para)).then(res => {
+        this.roleloading = false;
+        this.$message({
+          message: '提交成功',
+          type: 'success'
+        });
+        this.roleFormVisible = false;
+        this.getUser();
       });
     }
   },
@@ -814,7 +1111,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_api__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs__ = __webpack_require__(16);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_qs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_qs__);
 //
 //
@@ -1077,16 +1374,15 @@ let base = '';
 let base_user_dir = '/dagger';
 // let base_user_dir = 'http://localhost:8100'
 
-
-// export const requestLogin = params => { return axios.post(`${base}/login`, params).then(res => res.data) }
-
 const reqSaveUserProfile = params => {
-      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base}/user/profile`, params).then(res => res.data);
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base}/user/profile`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
 };
 /* unused harmony export reqSaveUserProfile */
 
-
-// export const reqGetUserList = params => { return axios.get(`${base}/user/list`, { params: params }) }
 
 const reqGetBookListPage = params => {
       return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base}/book/list`, { params: params });
@@ -1128,6 +1424,16 @@ const requestDoLogin = params => {
 /* harmony export (immutable) */ __webpack_exports__["a"] = requestDoLogin;
 
 
+const requestDoRegisterUser = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/register/doregister`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["k"] = requestDoRegisterUser;
+
+
 const requestDoUpdateUser = params => {
       return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/usermanage/doupdate`, params, {
             headers: {
@@ -1149,15 +1455,33 @@ const requestDoChangePwd = params => {
 
 
 const requestDoQueryUsers = params => {
-      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base_user_dir}/usermanage/doquery`, params).then(res => res.data);
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/usermanage/doquery`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
 };
-/* harmony export (immutable) */ __webpack_exports__["g"] = requestDoQueryUsers;
+/* harmony export (immutable) */ __webpack_exports__["l"] = requestDoQueryUsers;
 
 
 const requestDoQueryRoles = params => {
-      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base_user_dir}/rolemanage/doqueryroles`, params).then(res => res.data);
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/rolemanage/doqueryroles`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
 };
-/* harmony export (immutable) */ __webpack_exports__["f"] = requestDoQueryRoles;
+/* harmony export (immutable) */ __webpack_exports__["g"] = requestDoQueryRoles;
+
+
+const requestDoAddRoles = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/rolemanage/doaddrole`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["j"] = requestDoAddRoles;
 
 
 const requestDoQueryUserRoles = params => {
@@ -1167,11 +1491,25 @@ const requestDoQueryUserRoles = params => {
             }
       }).then(res => res.data);
 };
-/* harmony export (immutable) */ __webpack_exports__["h"] = requestDoQueryUserRoles;
+/* harmony export (immutable) */ __webpack_exports__["m"] = requestDoQueryUserRoles;
+
+
+const requestDoBindUserRoles = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/rolemanage/dobind`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["n"] = requestDoBindUserRoles;
 
 
 const requestDoQueryPrivileges = params => {
-      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base_user_dir}/privilegemanage/queryprivileges`, params).then(res => res.data);
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/privilegemanage/queryprivileges`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
 };
 /* harmony export (immutable) */ __webpack_exports__["d"] = requestDoQueryPrivileges;
 
@@ -1184,6 +1522,33 @@ const requestDoAddPrivileges = params => {
       }).then(res => res.data);
 };
 /* harmony export (immutable) */ __webpack_exports__["e"] = requestDoAddPrivileges;
+
+
+const requestDoQueryRolePrivileges = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/privilegemanage/queryprivilegebyrole`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["h"] = requestDoQueryRolePrivileges;
+
+
+const requestDoBindRolePrivileges = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(`${base_user_dir}/privilegemanage/dobind`, params, {
+            headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+            }
+      }).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["i"] = requestDoBindRolePrivileges;
+
+
+//公共查询
+const requestDoQuerySecLevelPrivileges = params => {
+      return __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(`${base_user_dir}/pub/sel/seclevelprivileges`, params).then(res => res.data);
+};
+/* harmony export (immutable) */ __webpack_exports__["f"] = requestDoQuerySecLevelPrivileges;
 
 
 /***/ }),
@@ -1476,7 +1841,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.getUser
     }
-  }, [_vm._v("查询")])], 1)], 1)], 1), _vm._v(" "), _c('el-table', {
+  }, [_vm._v("查询")])], 1), _vm._v(" "), _c('el-form-item', [_c('el-button', {
+    attrs: {
+      "type": "primary"
+    },
+    on: {
+      "click": _vm.showAddDialog
+    }
+  }, [_vm._v("新增")])], 1)], 1)], 1), _vm._v(" "), _c('el-table', {
     directives: [{
       name: "loading",
       rawName: "v-loading",
@@ -1552,29 +1924,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           },
           on: {
             "click": function($event) {
-              _vm.showEditDialog(scope.$user_id, scope.row)
-            }
-          }
-        }, [_vm._v("编辑")]), _vm._v(" "), _c('el-button', {
-          attrs: {
-            "size": "small"
-          },
-          on: {
-            "click": function($event) {
               _vm.showRoleDialog(scope.$user_id, scope.row)
             }
           }
-        }, [_vm._v("角色")]), _vm._v(" "), _c('el-button', {
-          attrs: {
-            "size": "small",
-            "type": "danger"
-          },
-          on: {
-            "click": function($event) {
-              _vm.delUser(scope.$user_id, scope.row)
-            }
-          }
-        }, [_vm._v("删除")])]
+        }, [_vm._v("角色")])]
       }
     }])
   })], 1), _vm._v(" "), _c('el-col', {
@@ -1603,6 +1956,206 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "current-change": _vm.handleCurrentChange
     }
   })], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "角色管理",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.roleFormVisible),
+      callback: function($$v) {
+        _vm.roleFormVisible = $$v
+      },
+      expression: "roleFormVisible"
+    }
+  }, [_c('el-table', {
+    directives: [{
+      name: "loading",
+      rawName: "v-loading",
+      value: (_vm.roleloading),
+      expression: "roleloading"
+    }],
+    ref: "rolesTable",
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "data": _vm.roles,
+      "highlight-current-row": ""
+    },
+    on: {
+      "current-change": _vm.selsRoleChange
+    }
+  }, [_c('el-table-column', {
+    staticStyle: {
+      "width": "20%"
+    },
+    attrs: {
+      "type": "role_id",
+      "prop": "role_id"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "40%"
+    },
+    attrs: {
+      "prop": "role_name",
+      "label": "角色名",
+      "sortable": ""
+    }
+  })], 1), _vm._v(" "), _c('el-col', {
+    staticClass: "toolbar",
+    attrs: {
+      "span": 24
+    }
+  }, [_c('el-pagination', {
+    staticStyle: {
+      "float": "right"
+    },
+    attrs: {
+      "layout": "prev, pager, next",
+      "page-size": 10,
+      "total": _vm.roletotal
+    },
+    on: {
+      "current-change": _vm.handleRoleCurrentChange
+    }
+  })], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.roleFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.editLoading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.roleSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "新增",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.addFormVisible),
+      callback: function($$v) {
+        _vm.addFormVisible = $$v
+      },
+      expression: "addFormVisible"
+    }
+  }, [_c('el-form', {
+    ref: "addForm",
+    attrs: {
+      "model": _vm.addForm,
+      "label-width": "80px",
+      "rules": _vm.addFormRules
+    }
+  }, [_c('el-form-item', {
+    attrs: {
+      "label": "账号",
+      "prop": "account"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.addForm.account),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "account", $$v)
+      },
+      expression: "addForm.account"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "密码",
+      "prop": "password"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "type": "password",
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.addForm.password),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "password", $$v)
+      },
+      expression: "addForm.password"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "邮箱",
+      "prop": "email"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.addForm.email),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "email", $$v)
+      },
+      expression: "addForm.email"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "性别",
+      "prop": "gender"
+    }
+  }, [_c('el-radio-group', {
+    on: {
+      "change": _vm.genderChange
+    },
+    model: {
+      value: (_vm.radio_gender),
+      callback: function($$v) {
+        _vm.radio_gender = $$v
+      },
+      expression: "radio_gender"
+    }
+  }, [_c('el-radio-button', {
+    attrs: {
+      "label": "男"
+    }
+  }), _vm._v(" "), _c('el-radio-button', {
+    attrs: {
+      "label": "女"
+    }
+  })], 1)], 1)], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.addFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.addLoading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.addSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1), _vm._v(" "), _c('el-dialog', {
     attrs: {
       "title": "编辑",
       "close-on-click-modal": false
@@ -1682,92 +2235,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.editSubmit($event)
       }
     }
-  }, [_vm._v("提交")])], 1)], 1), _vm._v(" "), _c('el-dialog', {
-    attrs: {
-      "title": "角色管理",
-      "close-on-click-modal": false
-    },
-    model: {
-      value: (_vm.roleFormVisible),
-      callback: function($$v) {
-        _vm.roleFormVisible = $$v
-      },
-      expression: "roleFormVisible"
-    }
-  }, [_c('el-table', {
-    directives: [{
-      name: "loading",
-      rawName: "v-loading",
-      value: (_vm.roleloading),
-      expression: "roleloading"
-    }],
-    ref: "rolesTable",
-    staticStyle: {
-      "width": "100%"
-    },
-    attrs: {
-      "data": _vm.roles,
-      "highlight-current-row": ""
-    },
-    on: {
-      "current-change": _vm.selsRole
-    }
-  }, [_c('el-table-column', {
-    staticStyle: {
-      "width": "20%"
-    },
-    attrs: {
-      "type": "role_id",
-      "prop": "role_id"
-    }
-  }), _vm._v(" "), _c('el-table-column', {
-    staticStyle: {
-      "width": "40%"
-    },
-    attrs: {
-      "prop": "role_name",
-      "label": "角色名",
-      "sortable": ""
-    }
-  })], 1), _vm._v(" "), _c('el-col', {
-    staticClass: "toolbar",
-    attrs: {
-      "span": 24
-    }
-  }, [_c('el-pagination', {
-    staticStyle: {
-      "float": "right"
-    },
-    attrs: {
-      "layout": "prev, pager, next",
-      "page-size": 10,
-      "total": _vm.roletotal
-    },
-    on: {
-      "current-change": _vm.handleRoleCurrentChange
-    }
-  })], 1), _vm._v(" "), _c('div', {
-    staticClass: "dialog-footer",
-    attrs: {
-      "slot": "footer"
-    },
-    slot: "footer"
-  }, [_c('el-button', {
-    nativeOn: {
-      "click": function($event) {
-        _vm.roleFormVisible = false
-      }
-    }
-  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
-    attrs: {
-      "type": "primary",
-      "loading": _vm.editLoading
-    },
-    nativeOn: {
-      "click": function($event) {
-        _vm.roleSubmit($event)
-      }
-    }
   }, [_vm._v("提交")])], 1)], 1)], 1)], 1)
 },staticRenderFns: []}
 
@@ -1833,7 +2300,14 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.getRoles
     }
-  }, [_vm._v("查询")])], 1)], 1)], 1), _vm._v(" "), _c('el-table', {
+  }, [_vm._v("查询")])], 1), _vm._v(" "), _c('el-form-item', [_c('el-button', {
+    attrs: {
+      "type": "primary"
+    },
+    on: {
+      "click": _vm.showAddDialog
+    }
+  }, [_vm._v("新增")])], 1)], 1)], 1), _vm._v(" "), _c('el-table', {
     directives: [{
       name: "loading",
       rawName: "v-loading",
@@ -1869,15 +2343,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "width": "20%"
     },
     attrs: {
-      "prop": "role_co",
-      "label": "编号",
-      "sortable": ""
-    }
-  }), _vm._v(" "), _c('el-table-column', {
-    staticStyle: {
-      "width": "30%"
-    },
-    attrs: {
       "prop": "role_desc",
       "label": "描述",
       "sortable": ""
@@ -1892,6 +2357,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "formatter": _vm.formatStatus,
       "sortable": ""
     }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "20%"
+    },
+    attrs: {
+      "label": "操作"
+    },
+    scopedSlots: _vm._u([{
+      key: "default",
+      fn: function(scope) {
+        return [_c('el-button', {
+          attrs: {
+            "size": "small"
+          },
+          on: {
+            "click": function($event) {
+              _vm.showPrivilegeDialog(scope.$role_id, scope.row)
+            }
+          }
+        }, [_vm._v("权限")])]
+      }
+    }])
   })], 1), _vm._v(" "), _c('el-col', {
     staticClass: "toolbar",
     attrs: {
@@ -1909,7 +2396,174 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "current-change": _vm.handleCurrentChange
     }
-  })], 1)], 1)], 1)
+  })], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "权限管理",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.privilegeFormVisible),
+      callback: function($$v) {
+        _vm.privilegeFormVisible = $$v
+      },
+      expression: "privilegeFormVisible"
+    }
+  }, [_c('el-table', {
+    directives: [{
+      name: "loading",
+      rawName: "v-loading",
+      value: (_vm.privilegeloading),
+      expression: "privilegeloading"
+    }],
+    ref: "privilegesTable",
+    staticStyle: {
+      "width": "100%"
+    },
+    attrs: {
+      "data": _vm.privileges,
+      "highlight-current-row": ""
+    },
+    on: {
+      "selection-change": _vm.selsPrivilege
+    }
+  }, [_c('el-table-column', {
+    staticStyle: {
+      "width": "5%"
+    },
+    attrs: {
+      "type": "selection"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "30%"
+    },
+    attrs: {
+      "type": "privilege_id",
+      "prop": "privilege_id"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "40%"
+    },
+    attrs: {
+      "prop": "privilege_name",
+      "label": "权限名",
+      "sortable": ""
+    }
+  })], 1), _vm._v(" "), _c('el-col', {
+    staticClass: "toolbar",
+    attrs: {
+      "span": 24
+    }
+  }, [_c('el-pagination', {
+    staticStyle: {
+      "float": "right"
+    },
+    attrs: {
+      "layout": "prev, pager, next",
+      "page-size": 10,
+      "total": _vm.privilegetotal
+    },
+    on: {
+      "current-change": _vm.handlePrivilegeCurrentChange
+    }
+  })], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.privilegeFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.privilegeloading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.privilegeSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1), _vm._v(" "), _c('el-dialog', {
+    attrs: {
+      "title": "新增",
+      "close-on-click-modal": false
+    },
+    model: {
+      value: (_vm.addFormVisible),
+      callback: function($$v) {
+        _vm.addFormVisible = $$v
+      },
+      expression: "addFormVisible"
+    }
+  }, [_c('el-form', {
+    ref: "addForm",
+    attrs: {
+      "model": _vm.addForm,
+      "label-width": "80px",
+      "rules": _vm.addFormRules
+    }
+  }, [_c('el-form-item', {
+    attrs: {
+      "label": "角色名",
+      "prop": "role_name"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "auto-complete": "off"
+    },
+    model: {
+      value: (_vm.addForm.role_name),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "role_name", $$v)
+      },
+      expression: "addForm.role_name"
+    }
+  })], 1), _vm._v(" "), _c('el-form-item', {
+    attrs: {
+      "label": "角色描述",
+      "prop": "role_dec"
+    }
+  }, [_c('el-input', {
+    attrs: {
+      "type": "textarea",
+      "rows": 8
+    },
+    model: {
+      value: (_vm.addForm.role_dec),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "role_dec", $$v)
+      },
+      expression: "addForm.role_dec"
+    }
+  })], 1)], 1), _vm._v(" "), _c('div', {
+    staticClass: "dialog-footer",
+    attrs: {
+      "slot": "footer"
+    },
+    slot: "footer"
+  }, [_c('el-button', {
+    nativeOn: {
+      "click": function($event) {
+        _vm.addFormVisible = false
+      }
+    }
+  }, [_vm._v("取消")]), _vm._v(" "), _c('el-button', {
+    attrs: {
+      "type": "primary",
+      "loading": _vm.addLoading
+    },
+    nativeOn: {
+      "click": function($event) {
+        _vm.addSubmit($event)
+      }
+    }
+  }, [_vm._v("提交")])], 1)], 1)], 1)], 1)
 },staticRenderFns: []}
 
 /***/ }),
@@ -2069,11 +2723,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('el-table-column', {
     staticStyle: {
-      "width": "10%"
+      "width": "5%"
     },
     attrs: {
       "type": "privilege_id",
       "prop": "privilege_id"
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "30%"
+    },
+    attrs: {
+      "prop": "privilege_co",
+      "label": "编号",
+      "sortable": ""
     }
   }), _vm._v(" "), _c('el-table-column', {
     staticStyle: {
@@ -2082,15 +2745,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "prop": "privilege_name",
       "label": "名称",
-      "sortable": ""
-    }
-  }), _vm._v(" "), _c('el-table-column', {
-    staticStyle: {
-      "width": "20%"
-    },
-    attrs: {
-      "prop": "privilege_co",
-      "label": "编号",
       "sortable": ""
     }
   }), _vm._v(" "), _c('el-table-column', {
@@ -2104,7 +2758,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }), _vm._v(" "), _c('el-table-column', {
     staticStyle: {
-      "width": "20%"
+      "width": "10%"
+    },
+    attrs: {
+      "prop": "privilege_type",
+      "label": "级别",
+      "formatter": _vm.formatType,
+      "sortable": ""
+    }
+  }), _vm._v(" "), _c('el-table-column', {
+    staticStyle: {
+      "width": "5%"
     },
     attrs: {
       "prop": "status",
@@ -2169,18 +2833,50 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "label": "权限类型",
       "prop": "privilege_type"
     }
-  }, [_c('el-input', {
-    attrs: {
-      "auto-complete": "off"
+  }, [_c('el-radio-group', {
+    on: {
+      "change": _vm.typeChange
     },
     model: {
-      value: (_vm.addForm.privilege_type),
+      value: (_vm.radio_type),
       callback: function($$v) {
-        _vm.$set(_vm.addForm, "privilege_type", $$v)
+        _vm.radio_type = $$v
       },
-      expression: "addForm.privilege_type"
+      expression: "radio_type"
     }
-  })], 1), _vm._v(" "), _c('el-form-item', {
+  }, [_c('el-radio-button', {
+    attrs: {
+      "label": "二级权限"
+    }
+  }), _vm._v(" "), _c('el-radio-button', {
+    attrs: {
+      "label": "三级权限"
+    }
+  })], 1)], 1), _vm._v(" "), (_vm.disableVal) ? _c('el-form-item', {
+    attrs: {
+      "label": "上级权限",
+      "prop": "parent_id"
+    }
+  }, [_c('el-select', {
+    attrs: {
+      "placeholder": "请选择二级权限"
+    },
+    model: {
+      value: (_vm.addForm.parent_id),
+      callback: function($$v) {
+        _vm.$set(_vm.addForm, "parent_id", $$v)
+      },
+      expression: "addForm.parent_id"
+    }
+  }, _vm._l((_vm.options), function(item) {
+    return _c('el-option', {
+      key: item.id,
+      attrs: {
+        "label": item.name,
+        "value": item.id
+      }
+    })
+  }))], 1) : _vm._e(), _vm._v(" "), _c('el-form-item', {
     attrs: {
       "label": "权限描述",
       "prop": "privilege_dec"
@@ -2783,4 +3479,4 @@ module.exports = Component.exports
 /***/ })
 
 },[133]);
-//# sourceMappingURL=app.053ba861fee36c31348f.js.map
+//# sourceMappingURL=app.eaec4a0834a9ea3c2e95.js.map

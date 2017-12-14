@@ -25,11 +25,12 @@
 
       <!--列表-->
       <el-table :data="privileges" highlight-current-row v-loading="loading" style="width: 100%;">
-        <el-table-column type="privilege_id" prop="privilege_id" style="width:10%"></el-table-column>
+        <el-table-column type="privilege_id" prop="privilege_id" style="width:5%"></el-table-column>
+        <el-table-column prop="privilege_co" label="编号" style="width:30%" sortable></el-table-column>
         <el-table-column prop="privilege_name" label="名称" style="width:20%" sortable></el-table-column>
-        <el-table-column prop="privilege_co" label="编号" style="width:20%" sortable></el-table-column>
         <el-table-column prop="privilege_dec" label="描述" style="width:30%" sortable></el-table-column>
-        <el-table-column prop="status" label="状态" style="width:20%" :formatter="formatStatus" sortable></el-table-column>
+        <el-table-column prop="privilege_type" label="级别" style="width:10%" :formatter="formatType" sortable></el-table-column>
+        <el-table-column prop="status" label="状态" style="width:5%" :formatter="formatStatus" sortable></el-table-column>
       </el-table>
 
       <!--页码条-->
@@ -45,7 +46,15 @@
             <el-input v-model="addForm.privilege_name" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="权限类型" prop="privilege_type">
-            <el-input v-model="addForm.privilege_type" auto-complete="off"></el-input>
+             <el-radio-group v-model="radio_type" @change="typeChange">
+               <el-radio-button label="二级权限"></el-radio-button>
+               <el-radio-button label="三级权限"></el-radio-button>
+             </el-radio-group>
+          </el-form-item>
+          <el-form-item label="上级权限" prop="parent_id" v-if="disableVal">
+            <el-select v-model="addForm.parent_id" placeholder="请选择二级权限">
+               <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="权限描述" prop="privilege_dec">
             <el-input type="textarea" v-model="addForm.privilege_dec" :rows="8"></el-input>
@@ -63,7 +72,7 @@
 
 <script>
   import qs from 'qs';
-  import { requestDoQueryPrivileges,requestDoAddPrivileges } from '../../api/api';
+  import { requestDoQueryPrivileges,requestDoAddPrivileges,requestDoQuerySecLevelPrivileges } from '../../api/api';
 
   export default {
     data() {
@@ -81,9 +90,6 @@
           privilege_name: [
             {required: true, message: '请输入权限名', trigger: 'blur'}
           ],
-          privilege_type: [
-            {required: true, message: '请输入权限类型', trigger: 'blur'}
-          ],
           privilege_dec: [
             {required: true, message: '请输入权限描述', trigger: 'blur'}
           ]
@@ -91,15 +97,24 @@
         addForm: {
           privilege_name: '',
           privilege_dec: '',
-          privilege_type: ''
-        }
+          privilege_type: '',
+          parent_id: ''
+        },
+        radio_type: '二级权限',
+        type_val: 2,
+        disableVal: false,
+        options: []
       }
     },
     methods: {
-      handleCurrentChange(val) {
+      handleCurrentChange: function(val) {
         this.page = val;
         this.getPrivileges();
       }, 
+      //状态显示转换
+      formatType: function (row, column) {
+        return row.privilege_type == '2' ? '二级权限' : '三级权限';
+      },
       //状态显示转换
       formatStatus: function (row, column) {
         return row.status == 'ENABLED' ? '启用' : '不启用';
@@ -132,7 +147,8 @@
             let para = {
                 privilegeName: this.addForm.privilege_name,
                 privilegeDec: this.addForm.privilege_dec,
-                privilegeType: this.addForm.privilege_type
+                privilegeType: this.type_val,
+                parentId: this.addForm.parent_id
             };
             requestDoAddPrivileges(qs.stringify(para)).then((res) => {
               this.addLoading = false;
@@ -147,6 +163,21 @@
           }
         });
       },
+      typeChange: function() {
+        if ("二级权限" == this.radio_type) {
+          this.disableVal = false;
+          this.type_val = 2 ;
+          this.options = [];
+        } else {
+          this.disableVal = true;
+          this.type_val = 3;
+          requestDoQuerySecLevelPrivileges({}).then((res) => {
+              this.options = [];
+              this.options = res.data_collect;
+              console.log(this.options);
+          });
+        }
+      }
     },
     mounted() {
       this.getPrivileges();
