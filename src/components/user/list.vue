@@ -332,19 +332,19 @@
         });
       },
       roleSubmit: function () {
-            let para = {
-                userId: this.currentUserId,
-                roleId: this.selsRoleId
-            };
-            requestDoBindUserRoles(qs.stringify(para)).then((res) => {
-              this.roleloading = false;
-              this.$message({
-                message: '提交成功',
-                type: 'success'
-              });
-              this.roleFormVisible = false;
-              this.getUser();
-            });
+        let para = {
+            userId: this.currentUserId,
+            roleId: this.selsRoleId
+        };
+        requestDoBindUserRoles(qs.stringify(para)).then((res) => {
+          this.roleloading = false;
+          this.$message({
+            message: '提交成功',
+            type: 'success'
+          });
+          this.roleFormVisible = false;
+          this.getUser();
+        });
       }
     },
     mounted() {

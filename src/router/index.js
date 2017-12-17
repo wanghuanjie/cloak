@@ -23,71 +23,49 @@ let router = new Router({
   routes: [
     {
       path: '/login',
-      name: '登录',
       component: Login
     },
     {
       path: '/',
-      name: 'home',
       component: Home,
-      redirect: '/dashboard',
-      leaf: true, // 只有一个节点
-      menuShow: true,
-      iconCls: 'iconfont icon-home', // 图标样式class
       children: [
-        {path: '/dashboard', component: Dashboard, name: '首页', menuShow: true}
+        {path: '/dashboard', component: Dashboard}
       ]
     },
     {
       path: '/',
       component: Home,
-      name: '用户管理',
-      menuShow: true,
-      // leaf: true, // 只有一个节点
-      iconCls: 'iconfont icon-users', // 图标样式class
       children: [
-        {path: '/user/list', component: UserList, name: '用户列表', menuShow: true}
+        {path: '/user/list', component: UserList}
       ]
     },
     {
       path: '/',
       component: Home,
-      name: '角色管理',
-      menuShow: true,
-      iconCls: 'iconfont icon-books',
       children: [
-        {path: '/role/list', component: RoleList, name: '角色列表', menuShow: true}
+        {path: '/role/list', component: RoleList}
       ]
     },
     {
       path: '/',
       component: Home,
-      name: '权限管理',
-      menuShow: true,
-      iconCls: 'iconfont icon-books',
       children: [
-        {path: '/privilege/list', component: PrivilegeList, name: '权限列表', menuShow: true}
+        {path: '/privilege/list', component: PrivilegeList}
       ]
     },
     {
       path: '/',
       component: Home,
-      name: '统计管理',
-      menuShow: true,
-      iconCls: 'iconfont icon-books',
       children: [
-        {path: 'statistics/user', component: Statistics, name: '用户统计', menuShow: true}
+        {path: 'statistics/user', component: Statistics}
       ]
     },
     {
       path: '/',
       component: Home,
-      name: '设置',
-      menuShow: true,
-      iconCls: 'iconfont icon-setting1',
       children: [
-        {path: '/user/profile', component: UserProfile, name: '个人信息', menuShow: true},
-        {path: '/user/changepwd', component: UserChangePwd, name: '修改密码', menuShow: true}
+        {path: '/user/profile', component: UserProfile},
+        {path: '/user/changepwd', component: UserChangePwd}
       ]
     }
   ]

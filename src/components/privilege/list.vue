@@ -56,6 +56,9 @@
                <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item label="权限别名" prop="privilege_alias">
+          <el-input v-model="addForm.privilege_alias" auto-complete="off"></el-input>
+          </el-form-item>
           <el-form-item label="权限描述" prop="privilege_dec">
             <el-input type="textarea" v-model="addForm.privilege_dec" :rows="8"></el-input>
           </el-form-item>
@@ -90,12 +93,16 @@
           privilege_name: [
             {required: true, message: '请输入权限名', trigger: 'blur'}
           ],
+          privilege_alias: [
+            {required: true, message: '请输入权限别名', trigger: 'blur'}
+          ],
           privilege_dec: [
             {required: true, message: '请输入权限描述', trigger: 'blur'}
           ]
         },
         addForm: {
           privilege_name: '',
+          privilege_alias: '',
           privilege_dec: '',
           privilege_type: '',
           parent_id: ''
@@ -134,6 +141,7 @@
         this.addFormVisible = true;
         this.addForm = {
           privilege_name: '',
+          privilege_alias: '',
           privilege_dec: '',
           privilege_type: ''
         };
@@ -146,6 +154,7 @@
 
             let para = {
                 privilegeName: this.addForm.privilege_name,
+                privilegeAlias: this.addForm.privilege_alias,
                 privilegeDec: this.addForm.privilege_dec,
                 privilegeType: this.type_val,
                 parentId: this.addForm.parent_id

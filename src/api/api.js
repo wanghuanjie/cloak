@@ -8,7 +8,25 @@ let base = ''
 let base_user_dir = '/dagger'
 // let base_user_dir = 'http://localhost:8100'
 
+export const requestDoLogin = params => { return axios.post(`${base_user_dir}/login/doin`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
+
+export const requestDoLogout = params => { return axios.post(`${base_user_dir}/login/doout`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
+
 export const reqSaveUserProfile = params => { return axios.post(`${base}/user/profile`, params ,{
+                      headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                      }
+                  }).then(res => res.data) }
+
+export const reqCurrentPrivilege = params => { return axios.post(`${base_user_dir}/login/currentPrivilege`, params ,{
                       headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                       }
@@ -23,12 +41,6 @@ export const reqEditBook = params => { return axios.get(`${base}/book/edit`, { p
 export const reqBatchDeleteBook = params => { return axios.get(`${base}/book/batchdelete`, { params: params }) }
 
 export const reqAddBook = params => { return axios.get(`${base}/book/add`, { params: params }) }
-
-export const requestDoLogin = params => { return axios.post(`${base_user_dir}/login/doin`, params ,{
-                      headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                      }
-                  }).then(res => res.data) }
 
 export const requestDoRegisterUser = params => { return axios.post(`${base_user_dir}/register/doregister`, params ,{
                       headers: {

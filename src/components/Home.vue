@@ -39,7 +39,7 @@
         </div>
         <!--导航菜单-->
         <el-menu default-active="0" router :collapse="collapsed">
-          <template v-for="(item,index) in $router.options.routes" v-if="item.menuShow">
+          <template v-for="(item,index) in privileges" v-if="item.menuShow">
             <el-submenu v-if="!item.leaf" :index="index+''">
               <template slot="title"><i :class="item.iconCls"></i><span slot="title">{{item.name}}</span></template>
               <el-menu-item v-for="term in item.children" :key="term.path" :index="term.path" v-if="term.menuShow"
@@ -71,8 +71,10 @@
 </template>
 
 <script>
+  import qs from 'qs';
+  import {requestDoLogout,reqCurrentPrivilege} from '../api/api';        
   import {bus} from '../bus.js'
-  import axios from 'axios'
+  // import axios from 'axios'
 
   export default {
     name: 'home',
@@ -86,6 +88,72 @@
         sysUserName: '',
         sysUserAvatar: '',
         collapsed: false,
+
+        //增加权限相关数据源
+        privileges: [
+          // {
+          //   path: '/login',
+          //   name: '登录'
+          // },
+          {
+            path: '/',
+            name: 'home',
+            redirect: '/dashboard',
+            leaf: true, // 只有一个节点
+            menuShow: true,
+            iconCls: 'iconfont icon-home', // 图标样式class
+            children: [
+              {path: '/dashboard', name: '首页', menuShow: true}
+            ]
+          },
+          {
+            path: '/',
+            name: '用户管理',
+            menuShow: true,
+            // leaf: true, // 只有一个节点
+            iconCls: 'iconfont icon-users', // 图标样式class
+            children: [
+              {path: '/user/list', name: '用户列表', menuShow: true}
+            ]
+          },
+          {
+            path: '/',
+            name: '角色管理',
+            menuShow: true,
+            iconCls: 'iconfont icon-books',
+            children: [
+              {path: '/role/list', name: '角色列表', menuShow: true}
+            ]
+          },
+          {
+            path: '/',
+            name: '权限管理',
+            menuShow: true,
+            iconCls: 'iconfont icon-books',
+            children: [
+              {path: '/privilege/list', name: '权限列表', menuShow: true}
+            ]
+          },
+          {
+            path: '/',
+            name: '统计管理',
+            menuShow: true,
+            iconCls: 'iconfont icon-books',
+            children: [
+              {path: '/statistics/user', name: '用户统计', menuShow: true}
+            ]
+          },
+          {
+            path: '/',
+            name: '设置',
+            menuShow: true,
+            iconCls: 'iconfont icon-setting1',
+            children: [
+              {path: '/user/profile', name: '个人信息', menuShow: true},
+              {path: '/user/changepwd', name: '修改密码', menuShow: true}
+            ]
+          }
+        ]
       }
     },
     methods: {
@@ -102,26 +170,92 @@
       showMenu(i, status){
         this.$refs.menuCollapsed.getElementsByClassName('submenu-hook-' + i)[0].style.display = status ? 'block' : 'none';
       },
+      getCurrentPrivilege () {
+          let privilegeParam = {};
+          reqCurrentPrivilege(qs.stringify(privilegeParam)).then(res => {
+            var current_privlieges = res.data_collect;
+            
+            this.privileges = [];
+            var fristItem = {
+                            path: '/',
+                            name: 'home',
+                            redirect: '/dashboard',
+                            leaf: true, // 只有一个节点
+                            menuShow: true,
+                            iconCls: 'iconfont icon-home', // 图标样式class
+                            children: [
+                              {path: '/dashboard', name: '首页', menuShow: true}
+                            ]
+                          };
+            this.privileges.push(fristItem);
+
+            current_privlieges.forEach(row=>{
+              var item =  {
+                          iconCls: 'iconfont icon-books',
+                          };
+              item.path = '/';
+              item.name = row.privilegeName;
+              item.menuShow = true;
+
+              var children = [];
+              if (row.childs != null) {
+                 row.childs.forEach(child=>{
+                   var childItem = {};
+
+                   childItem.path = '/'+row.privilegeAlias+'/'+child.privilegeAlias;
+                   console.log(row.privilegeAlias+','+childItem.path+','+child.privilegeAlias+','+childItem.path);
+
+                   childItem.name = child.privilegeName;
+                   childItem.menuShow = true;
+
+                   children.push(childItem);
+                 });
+              }
+              item.children = children;
+
+              this.privileges.push(item);
+              console.log(row);  
+              console.log(this.privileges);            
+            });
+
+            var endItem = {
+                          path: '/',
+                          name: '设置',
+                          menuShow: true,
+                          iconCls: 'iconfont icon-setting1',
+                          children: [
+                            {path: '/user/profile', name: '个人信息', menuShow: true},
+                            {path: '/user/changepwd', name: '修改密码', menuShow: true}
+                          ]
+                        };
+            this.privileges.push(endItem); 
+          });
+      },
       logout(){
-        var _this = this;
         this.$confirm('确认退出吗?', '提示', {
           //type: 'warning'
         }).then(() => {
-          sessionStorage.removeItem('access-user');
-          axios.defaults.headers.dagger_token = null;
-
-          _this.$router.push('/login');
+          let logoutParams = {};
+          requestDoLogout(qs.stringify(logoutParams)).then(data => {
+            sessionStorage.removeItem('access-user');
+            // axios.defaults.headers.dagger_token = null;
+            this.$router.push('/login');
+          });
         }).catch(() => {
 
         });
+      },
+      setUser () {
+        var user = sessionStorage.getItem('access-user');
+        if (user) {
+          user = JSON.parse(user);
+          this.sysUserName = user.userName || '';
+        }
       }
     },
     mounted() {
-      var user = sessionStorage.getItem('access-user');
-      if (user) {
-        user = JSON.parse(user);
-        this.sysUserName = user.userName || '';
-      }
+      this.getCurrentPrivilege ();
+      this.setUser ();
     }
   }
 </script>
